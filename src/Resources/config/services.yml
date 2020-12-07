@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Kematjaya\Upload\Uploader\UploaderInterface:
+        class: Kematjaya\UploadBundle\Uploader\FileUploader
+        public: true
+        
+    Kematjaya\UploadBundle\Manager\DocumentManagerInterface:
+        class: Kematjaya\UploadBundle\Manager\DocumentManager
