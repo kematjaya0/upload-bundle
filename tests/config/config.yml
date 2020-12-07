@@ -1,2 +1,13 @@
 framework:
     test: true
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Symfony\Component\Routing\Generator\UrlGeneratorInterface: ~
+    
+    Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface:
+        class: Kematjaya\UploadBundle\Tests\Model\DocumentRepository

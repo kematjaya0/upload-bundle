@@ -1,0 +1,4 @@
+kmj_upload_download:
+    path: /kmj/{id}/download
+    methods: GET
+    controller: Kematjaya\UploadBundle\Controller\DownloadController::download

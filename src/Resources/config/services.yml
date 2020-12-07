@@ -13,3 +13,6 @@ services:
             
     Kematjaya\UploadBundle\Manager\DocumentManagerInterface:
         class: Kematjaya\UploadBundle\Manager\DocumentManager
+
+    Kematjaya\UploadBundle\Extension\DocumentExtension:
+        class: Kematjaya\UploadBundle\Extension\DocumentExtension
