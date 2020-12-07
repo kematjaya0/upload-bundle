@@ -8,5 +8,8 @@ services:
         class: Kematjaya\UploadBundle\Uploader\FileUploader
         public: true
         
+    Kematjaya\UploadBundle\Uploader\UploaderInterface:
+        class: Kematjaya\UploadBundle\Uploader\FileUploader
+            
     Kematjaya\UploadBundle\Manager\DocumentManagerInterface:
         class: Kematjaya\UploadBundle\Manager\DocumentManager

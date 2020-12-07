@@ -31,6 +31,11 @@ class DocumentManager implements DocumentManagerInterface
         $this->documentRepo = $documentRepo;
     }
     
+    public function getUploader():UploaderInterface
+    {
+        return $this->uploader;
+    }
+    
     public function upload(UploadedFile $file, string $className, string $directory = null):DocumentInterface
     {
         $uploadedFile = $this->uploader->upload($file, $directory);
@@ -46,6 +51,7 @@ class DocumentManager implements DocumentManagerInterface
     {
         $document = $this->documentRepo->createDocumentObject();
         $document
+                ->setCreatedAt(new \DateTime())
                 ->setClassName($className)
                 ->setExtension($file->getExtension())
                 ->setFileName($file->getFilename())

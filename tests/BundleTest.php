@@ -5,6 +5,7 @@ namespace Kematjaya\UploadBundle\Tests;
 use Kematjaya\UploadBundle\Tests\Model\Document;
 use Kematjaya\UploadBundle\Tests\UploadBundleTest;
 use Kematjaya\UploadBundle\Entity\DocumentInterface;
+use Kematjaya\UploadBundle\Transformer\DocumentTransformer;
 use Kematjaya\UploadBundle\Manager\DocumentManager;
 use Kematjaya\UploadBundle\Manager\DocumentManagerInterface;
 use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
@@ -117,5 +118,24 @@ class BundleTest extends WebTestCase
         $manager = new DocumentManager($uploader, $documentRepo);
         
         $this->assertInstanceOf(File::class, $manager->findById($document->getId()));
+    }
+    
+    /**
+     * @depends testDocumentManager
+     * @depends testLoadBundle
+     * @depends testUploadFile
+     */
+    public function testTransformer(DocumentInterface $document, UploaderInterface $uploader, File $file)
+    {
+        $document = Document::fromFile($file);
+        $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
+            'createDocumentObject' => new Document(),
+            'findOneById' => $document
+        ]);
+        
+        $manager = new DocumentManager($uploader, $documentRepo);
+        
+        $transformer = new DocumentTransformer($manager);
+        $this->assertInstanceOf(File::class, $transformer->transform($document->getId()));
     }
 }
