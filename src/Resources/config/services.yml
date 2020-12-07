@@ -16,3 +16,7 @@ services:
 
     Kematjaya\UploadBundle\Extension\DocumentExtension:
         class: Kematjaya\UploadBundle\Extension\DocumentExtension
+        
+    Kematjaya\UploadBundle\Controller\DownloadController:
+        class: Kematjaya\UploadBundle\Controller\DownloadController
+        

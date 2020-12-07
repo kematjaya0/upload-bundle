@@ -62,7 +62,7 @@ class DocumentExtension extends AbstractTypeExtension
             if($document)
             {
                 $view->vars['html_label'] = $options['html_label'] ? $options['html_label'] : $document->getFileName();
-                $view->vars['download_url'] = $this->urlGenerator->generate("homepage_download", ['id' => $document->getId()]);
+                $view->vars['download_url'] = $this->urlGenerator->generate("kmj_upload_download", ['id' => $document->getId()]);
             }
             
         }
