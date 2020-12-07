@@ -13,8 +13,8 @@
         "symfony/config": "^4.0|^5.0",
         "symfony/yaml": "^4.0|^5.0",
         "kematjaya/upload": "^1.2",
-        "symfony/translation": "^5.2",
-        "symfony/mime": "^5.2",
+        "symfony/translation": "^4.0|^5.0",
+        "symfony/mime": "^4.0|^5.0",
         "ramsey/uuid": "^4.1"
     },
     "require-dev": {
