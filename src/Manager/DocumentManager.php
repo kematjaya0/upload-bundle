@@ -15,17 +15,17 @@ class DocumentManager implements DocumentManagerInterface
 {
     /**
      *
-     * @var UploaderInterface 
+     * @var UploaderInterface
      */
     private $uploader;
     
     /**
      *
-     * @var DocumentRepositoryInterface 
+     * @var DocumentRepositoryInterface
      */
     private $documentRepo;
     
-    public function __construct(UploaderInterface $uploader, DocumentRepositoryInterface $documentRepo) 
+    public function __construct(UploaderInterface $uploader, DocumentRepositoryInterface $documentRepo)
     {
         $this->uploader = $uploader;
         $this->documentRepo = $documentRepo;
@@ -51,11 +51,11 @@ class DocumentManager implements DocumentManagerInterface
     {
         $document = $this->documentRepo->createDocumentObject();
         $document
-                ->setCreatedAt(new \DateTime())
-                ->setClassName($className)
-                ->setExtension($file->getExtension())
-                ->setFileName($file->getFilename())
-                ->setPath($file->getPath());
+            ->setCreatedAt(new \DateTime())
+            ->setClassName($className)
+            ->setExtension($file->getExtension())
+            ->setFileName($file->getFilename())
+            ->setPath($file->getPath());
         
         $this->documentRepo->save($document);
         
@@ -67,7 +67,12 @@ class DocumentManager implements DocumentManagerInterface
         $document = $this->documentRepo->findOneById($uuid);
         if($document)
         {
-            return new UploadedFile($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName(), $document->getFileName(), $document->getExtension());
+            try {
+                return new UploadedFile($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName(), $document->getFileName(), $document->getExtension());
+            }catch (\Exception $exception){
+            
+            }
+            
         }
         
         return null;
