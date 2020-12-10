@@ -219,5 +219,8 @@ public function buildForm(FormBuilderInterface $builder, array $options)
     ]);
     ...
 }
-
+```
+7. update your database schema
+```
+php bin/console doctrine:schema:update --force
 ```
