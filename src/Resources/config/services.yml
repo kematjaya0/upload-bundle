@@ -20,3 +20,5 @@ services:
     Kematjaya\UploadBundle\Controller\DownloadController:
         class: Kematjaya\UploadBundle\Controller\DownloadController
         
+    Kematjaya\UploadBundle\Type\KmjFileType: ~
+        

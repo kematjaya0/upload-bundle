@@ -4,7 +4,7 @@
 
     {{ block('form_widget') }}
     {% if download_url is defined %}
-        <p><a href="{{ download_url }}" class="{{html_class}}">{{ html_icon|raw }} {{ html_label }}</a></p>
+        <p><a onclick="window.open('{{ download_url }}', 'newwindow', 'width=800, height=600')" class="{{html_class}}">{{ html_icon|raw }} {{ html_label }}</a></p>
     {% endif %}
-    
+
 {% endblock %}

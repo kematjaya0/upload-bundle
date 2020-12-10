@@ -2,8 +2,8 @@
 
 namespace Kematjaya\UploadBundle\Extension;
 
+use Kematjaya\UploadBundle\Type\KmjFileType;
 use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -27,7 +27,9 @@ class DocumentExtension extends AbstractTypeExtension
      */
     private $repository;
     
-    public function __construct(UrlGeneratorInterface $urlGenerator, DocumentRepositoryInterface $repository) 
+    public function __construct(
+            UrlGeneratorInterface $urlGenerator, 
+            DocumentRepositoryInterface $repository) 
     {
         $this->urlGenerator = $urlGenerator;
         $this->repository = $repository;
@@ -36,7 +38,7 @@ class DocumentExtension extends AbstractTypeExtension
     public static function getExtendedTypes(): iterable 
     {
         return [
-            FileType::class
+            KmjFileType::class
         ];
     }
 
