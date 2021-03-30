@@ -19,15 +19,15 @@ interface DocumentInterface
     
     public function getClassName():?string;
     
-    public function setFileName(string $className):self;
+    public function setFileName(string $fileName):self;
     
     public function getFileName():?string;
     
-    public function setPath(string $className):self;
+    public function setPath(string $path):self;
     
     public function getPath():?string;
     
-    public function setExtension(string $className):self;
+    public function setExtension(string $extension):self;
     
     public function getExtension():?string;
 }

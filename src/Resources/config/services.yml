@@ -21,4 +21,6 @@ services:
         class: Kematjaya\UploadBundle\Controller\DownloadController
         
     Kematjaya\UploadBundle\Type\KmjFileType: ~
+    Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface:
+        class: Kematjaya\UploadBundle\Repository\DocumentRepository
         
