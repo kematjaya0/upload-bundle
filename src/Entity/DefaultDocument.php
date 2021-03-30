@@ -7,8 +7,6 @@
 namespace Kematjaya\UploadBundle\Entity;
 
 use DateTimeInterface;
-use Ramsey\Uuid\UuidInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @package Kematjaya\UploadBundle\Entity
@@ -67,9 +65,9 @@ class DefaultDocument extends AbstractDocument
         return $this->fileName;
     }
 
-    public function getId(): ?UuidInterface 
+    public function getId(): ?string 
     {
-        return Uuid::fromDateTime(new \DateTime());
+        return md5((new \DateTime())->format('Y-m-d H:i:s'));
     }
 
     public function getPath(): ?string 

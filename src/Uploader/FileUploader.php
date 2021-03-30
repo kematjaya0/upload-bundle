@@ -2,6 +2,7 @@
 
 namespace Kematjaya\UploadBundle\Uploader;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -31,12 +32,13 @@ class FileUploader implements UploaderInterface
      */
     private $targetDir;
     
-    public function __construct(ContainerInterface $container, SluggerInterface $slugger)
+    public function __construct(ContainerBagInterface $bag, ContainerInterface $container, SluggerInterface $slugger)
     {
         $this->container = $container;
         $this->slugger = $slugger;
         
-        $this->targetDir = $container->hasParameter('upload') ? $container->getParameter('upload') : null;
+        $configs = $bag->get('upload');
+        $this->targetDir = $configs['uploads_dir'];
     }
     
     public function setTargetDirectory(string $uploadDir):UploaderInterface

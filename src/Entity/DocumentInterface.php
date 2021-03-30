@@ -2,14 +2,12 @@
 
 namespace Kematjaya\UploadBundle\Entity;
 
-use Ramsey\Uuid\UuidInterface;
-
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
 interface DocumentInterface 
 {
-    public function getId():?UuidInterface;
+    public function getId():?string;
     
     public function setCreatedAt(\DateTimeInterface $createdAt):self;
     

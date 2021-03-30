@@ -106,9 +106,9 @@ class Document extends AbstractDocument
         return $this->created_at;
     }
 
-    public function getId(): ?\Ramsey\Uuid\UuidInterface 
+    public function getId(): ?string 
     {
-        return \Ramsey\Uuid\Uuid::fromDateTime($this->getCreatedAt());
+        return md5((new \DateTime())->format('Y-m-d H:i:s'));
     }
 
     public static function fromFile(File $file): DocumentInterface 
