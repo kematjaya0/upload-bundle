@@ -60,7 +60,7 @@ class Document extends AbstractDocument
      */
     private $extension;
 
-    public function getId(): ?UuidInterface
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -192,12 +192,15 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
 ```
 5. register repo in config/services.yml and set upload path in parameter
 ```
-parameters:
-    upload: '%kernel.project_dir%/public/uploads'
-    
 services:
     Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface:
         class: App\Repository\DocumentRepository
+```
+6. Set Upload directory
+```
+// config/packages/upload.yaml
+upload:
+    uploads_dir: 'directory your save attachment'
 ```
 6. use KmjFileType in form
 ```
