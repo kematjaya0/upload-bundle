@@ -9,7 +9,19 @@ composer require kematjaya/upload-bundle
 Kematjaya\UploadBundle\UploadBundle::class => ['all' => true]
 ...
 ```
-6. Set Upload directory
+3. Update schema database
+```
+php bin/console doctrine:schema:update --force
+```
+4. import route
+```
+## config/routes/annotations.yaml
+...
+upload:
+    resource: '@UploadBundle/Resources/routes/all.yml'
+...
+```
+5. Set Upload directory
 ```
 // config/packages/upload.yaml
 upload:
