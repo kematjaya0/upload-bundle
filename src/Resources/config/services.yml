@@ -23,4 +23,6 @@ services:
     Kematjaya\UploadBundle\Type\KmjFileType: ~
     Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface:
         class: Kematjaya\UploadBundle\Repository\DocumentRepository
+        tags: 
+            - doctrine.repository_service
         

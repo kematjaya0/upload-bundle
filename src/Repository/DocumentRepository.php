@@ -1,35 +1,39 @@
 <?php
 
-/**
- * This file is part of the upload-bundle.
- */
-
 namespace Kematjaya\UploadBundle\Repository;
 
+use Kematjaya\UploadBundle\Entity\Document;
 use Kematjaya\UploadBundle\Entity\DocumentInterface;
-use Exception;
+use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @package Kematjaya\UploadBundle\Repository
- * @license https://opensource.org/licenses/MIT MIT
- * @author  Nur Hidayatullah <kematjaya0@gmail.com>
+ * @method Document|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Document|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Document[]    findAll()
+ * @method Document[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DocumentRepository implements DocumentRepositoryInterface
+class DocumentRepository extends ServiceEntityRepository implements DocumentRepositoryInterface
 {
-    
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Document::class);
+    }
+
     public function createDocumentObject(): DocumentInterface 
     {
-        throw new Exception(sprintf('please create an entity.'));
+        return new Document();
     }
 
     public function findOneById(string $uuid): ?DocumentInterface 
     {
-        throw new Exception(sprintf('please create an entity.'));
+        return $this->find($uuid);
     }
 
     public function save(DocumentInterface $entity): void 
     {
-        throw new Exception(sprintf('please create an entity.'));
+        $this->_em->persist($entity);
+        $this->_em->flush();
     }
-
 }
