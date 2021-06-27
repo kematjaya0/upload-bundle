@@ -29,3 +29,7 @@ services:
     Kematjaya\UploadBundle\Twig\DownloadExtension:
         class: Kematjaya\UploadBundle\Twig\DownloadExtension
         tags: ['twig.extension']
+        
+    Kematjaya\UploadBundle\Twig\ImageExtension:
+        class: Kematjaya\UploadBundle\Twig\ImageExtension
+        tags: ['twig.extension']

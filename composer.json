@@ -22,7 +22,8 @@
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/orm": "^2.8",
         "symfony/uid": "^5.3",
-        "symfony/doctrine-bridge": "^5.3"
+        "symfony/doctrine-bridge": "^5.3",
+        "minwork/array": "^1.13"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.3",

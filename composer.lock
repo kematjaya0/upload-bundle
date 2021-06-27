@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea9ada5ebc15e2e5df136a4735a9f9b1",
+    "content-hash": "5a24b32d11e538f4db320ee85be6f80e",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -1286,6 +1286,61 @@
                 "source": "https://github.com/kematjaya0/upload/tree/1.3"
             },
             "time": "2020-12-08T08:33:04+00:00"
+        },
+        {
+            "name": "minwork/array",
+            "version": "v1.13.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/minwork/array.git",
+                "reference": "ccb3f84d10b2ccd327e0196e374edd12aacfe74c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/minwork/array/zipball/ccb3f84d10b2ccd327e0196e374edd12aacfe74c",
+                "reference": "ccb3f84d10b2ccd327e0196e374edd12aacfe74c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Minwork\\Helper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christopher Kalkhoff",
+                    "email": "krzysztof.kalkhoff@gmail.com",
+                    "role": "Founder"
+                }
+            ],
+            "description": "Pack of advanced array functions specifically tailored for: associative (assoc) array, multidimensional array, array of objects and handling nested array elements",
+            "keywords": [
+                "Associative",
+                "array",
+                "arrays",
+                "assoc",
+                "helper",
+                "multidimensional",
+                "objects",
+                "php 7"
+            ],
+            "support": {
+                "issues": "https://github.com/minwork/array/issues",
+                "source": "https://github.com/minwork/array/tree/v1.13.5"
+            },
+            "time": "2020-10-04T22:20:56+00:00"
         },
         {
             "name": "psr/cache",
