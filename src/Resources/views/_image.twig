@@ -1,5 +1,5 @@
 {% if data is not null %}
-    <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes }}/>
+    <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes|raw }}/>
 {% else %}
-    <img src="{{ asset('bundles/upload/images/no-image.png')}}" {{ attributes }}/>
+    <img src="{{ asset('bundles/upload/images/no-image.png')}}" {{ attributes|raw }}/>
 {% endif %}
