@@ -36,7 +36,7 @@ class DownloadExtension extends AbstractExtension
         ];
     }
     
-    public function downloadLink(string $id = null):string
+    public function downloadLink(string $id = null):?string
     {
         return $this->twig->render('@Upload/_download.twig', [
             'data' => $id
