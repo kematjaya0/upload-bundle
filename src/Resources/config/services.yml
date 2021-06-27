@@ -26,3 +26,6 @@ services:
         tags: 
             - doctrine.repository_service
         
+    Kematjaya\UploadBundle\Twig\DownloadExtension:
+        class: Kematjaya\UploadBundle\Twig\DownloadExtension
+        tags: ['twig.extension']
