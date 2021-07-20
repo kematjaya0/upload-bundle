@@ -40,8 +40,7 @@ class DocumentManager implements DocumentManagerInterface
     public function upload(UploadedFile $file, string $className, string $directory = null):DocumentInterface
     {
         $uploadedFile = $this->uploader->upload($file, $directory);
-        if(!$uploadedFile)
-        {
+        if (!$uploadedFile) {
             throw new \Exception("failed to upload file");
         }
         
@@ -66,18 +65,22 @@ class DocumentManager implements DocumentManagerInterface
     public function findById(string $uuid):?File
     {
         $document = $this->documentRepo->findOneById($uuid);
-        if($document)
-        {
-            try {
-                $file = new KmjUploadedFile($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName(), $document->getFileName(), $document->getExtension());
-                $file->setId($document->getId());
-                return $file;
-            }catch (\Exception $exception){
+        if (!$document) {
             
-            }
-            
+            return null;
         }
         
-        return null;
+        try {
+            $file = new KmjUploadedFile(
+                $document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName(), 
+                $document->getFileName(), 
+                $document->getExtension()
+            );
+            $file->setId($document->getId());
+
+            return $file;
+        }catch (\Exception $exception){
+            throw $exception;
+        }
     }
 }

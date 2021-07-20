@@ -44,19 +44,19 @@ class DocumentTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value) 
     {
-        if(!$value) {
+        if (!$value) {
             return null;
         }
         
-        if(!$value instanceof File) {
+        if (!$value instanceof File) {
             return $value;
         }
         
-        if($value->getError()) {
+        if ($value->getError()) {
             return $value;
         }
         
-        if(!$value instanceof KmjUploadedFile) {
+        if (!$value instanceof KmjUploadedFile) {
             $document = $this->manager->upload($value, $this->className ? $this->className : get_class($value), $this->additionalPath);
             return $document ? $document->getId() : null;
         }
@@ -71,7 +71,7 @@ class DocumentTransformer implements DataTransformerInterface
      */
     public function transform($value) 
     {
-        if(!$value) {
+        if (!$value) {
             return null;
         }
         

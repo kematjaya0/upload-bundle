@@ -27,9 +27,7 @@ class DocumentExtension extends AbstractTypeExtension
      */
     private $repository;
     
-    public function __construct(
-            UrlGeneratorInterface $urlGenerator, 
-            DocumentRepositoryInterface $repository) 
+    public function __construct(UrlGeneratorInterface $urlGenerator, DocumentRepositoryInterface $repository) 
     {
         $this->urlGenerator = $urlGenerator;
         $this->repository = $repository;
@@ -54,15 +52,13 @@ class DocumentExtension extends AbstractTypeExtension
     
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        if($form->getData())
-        {
+        if ($form->getData()) {
             $view->vars['html_class'] = $options['html_class'];
             $view->vars['html_label'] = $options['html_label'];
             $view->vars['html_icon'] = $options['html_icon'];
             
             $document = $this->repository->findOneById($form->getData());
-            if($document)
-            {
+            if ($document) {
                 $view->vars['html_label'] = $options['html_label'] ? $options['html_label'] : $document->getFileName();
                 $view->vars['download_url'] = $this->urlGenerator->generate("kmj_upload_download", ['id' => $document->getId()]);
             }

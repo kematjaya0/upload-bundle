@@ -3,7 +3,6 @@
 namespace Kematjaya\UploadBundle\Controller;
 
 use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
-use PhpParser\Node\Expr\Throw_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,12 +17,11 @@ class DownloadController extends AbstractController
     {
         try {
             $document = $repository->findOneById($id);
-            if(!$document)
-            {
+            if (!$document) {
                 throw new \Exception(sprintf('unable to load document with id: %s'. $id));
             }
             
-            If(!file_exists($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName())){
+            if (!file_exists($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName())) {
                 throw new \Exception('File not found !!');
             }
             $file = new File($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName());

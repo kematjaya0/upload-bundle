@@ -1,0 +1,13 @@
+{% use "bootstrap_4_layout.html.twig" %}
+
+{% block file_widget %}
+
+    {{ block('form_widget') }}
+    
+    {% if download_url is defined %}
+        <p>
+            <a onclick="window.open('{{ download_url }}', 'newwindow', 'width=800, height=600')" class="btn btn-outline-success">{{ html_icon|raw }} {{ html_label }}</a>
+        </p>
+    {% endif %}
+
+{% endblock %}

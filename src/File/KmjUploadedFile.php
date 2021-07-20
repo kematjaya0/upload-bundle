@@ -36,5 +36,4 @@ class KmjUploadedFile extends UploadedFile
         return $this;
     }
 
-
 }
