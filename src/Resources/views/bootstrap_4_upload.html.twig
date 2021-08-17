@@ -2,7 +2,7 @@
 
 {% block file_widget %}
 
-    {{ block('form_widget') }}
+    {{- parent() -}}
     
     {% if download_url is defined %}
         <p>
