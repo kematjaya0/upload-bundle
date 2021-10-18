@@ -6,9 +6,11 @@
 
 namespace Kematjaya\UploadBundle\Twig;
 
+use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Twig\Environment;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @package Kematjaya\UploadBundle\Twig
@@ -24,8 +26,25 @@ class DownloadExtension extends AbstractExtension
      */
     private $twig;
     
-    public function __construct(Environment $twig) 
+    /**
+     * 
+     * @var TranslatorInterface
+     */
+    private $translator;
+    
+    /**
+     * 
+     * @var DocumentRepositoryInterface
+     */
+    private $repository;
+    
+    const LABEL_FILENAME = 'filename';
+    const LABEL_DEFAULT = 'default';
+    
+    public function __construct(Environment $twig, DocumentRepositoryInterface $repository, TranslatorInterface $translator) 
     {
+        $this->repository = $repository;
+        $this->translator = $translator;
         $this->twig = $twig;
     }
     
@@ -36,10 +55,34 @@ class DownloadExtension extends AbstractExtension
         ];
     }
     
-    public function downloadLink(string $id = null):?string
+    public function downloadLink(string $id = null, array $options = []):?string
     {
+        if (!isset($options['attr']['class'])) {
+            $options['attr']['class'] = 'btn btn-sm btn-outline-success';
+        }
+        if (!isset($options['icon'])) {
+            $options['icon'] = '<span class="fa fa-download"></span>';
+        }
+        if (!isset($options['label_type'])) {
+            $options['label_type'] = self::LABEL_DEFAULT;
+            $options['label'] = $this->translator->trans('download');
+        }
+        
+        if (self::LABEL_FILENAME === $options['label_type']) {
+            $document = $this->repository->findOneById($id);
+            if ($document) {
+                $options['label'] = $document->getFileName();
+            }
+        }
+        
+        foreach ($options['attr'] as $name => $value) {
+            $options['attr'][$name] = sprintf('%s="%s"', $name, $value);
+        }
+        
+        $options['attr'] = implode(" ", array_values($options['attr']));
+        
         return $this->twig->render('@Upload/_download.twig', [
-            'data' => $id
+            'data' => $id, 'options' => $options
         ]);
     }
 }

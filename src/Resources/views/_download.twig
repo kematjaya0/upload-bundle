@@ -1,3 +1,3 @@
 {% if data is not null %}
-    <a onclick="window.open('{{ path('kmj_upload_download', {id: data })}}', 'newwindow', 'width=800, height=600')" class="btn btn-sm btn-outline-success"><span class="fa fa-download"></span> {{ 'download'|trans }}</a>
+    <a onclick="window.open('{{ path('kmj_upload_download', {id: data })}}', 'newwindow', 'width=800, height=600')" {{ options.attr|raw }}>{{ options.icon|raw }} {{ options.label }}</a>
 {% endif %}
