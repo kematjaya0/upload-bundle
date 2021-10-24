@@ -69,7 +69,7 @@ class DownloadExtension extends AbstractExtension
         }
         
         if (self::LABEL_FILENAME === $options['label_type']) {
-            $document = $this->repository->findOneById($id);
+            $document = $id ? $this->repository->findOneById($id) : null;
             if ($document) {
                 $options['label'] = $document->getFileName();
             }
