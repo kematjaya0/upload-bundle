@@ -30,6 +30,12 @@ class DocumentTransformer implements DataTransformerInterface
      */
     private $additionalPath;
     
+    /**
+     * 
+     * @var string
+     */
+    private $id;
+    
     public function __construct(DocumentManagerInterface $manager, string $className = null,  string $additionalPath = null) 
     {
         $this->manager = $manager;
@@ -44,20 +50,30 @@ class DocumentTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value) 
     {
-        if (!$value) {
+        if (null === $value and null === $this->id) {
+            
             return null;
         }
         
+        
+        
         if (!$value instanceof File) {
+            if (null !== $this->id) {
+                
+                return $this->id;
+            }
+            
             return $value;
         }
         
         if ($value->getError()) {
+            
             return $value;
         }
         
         if (!$value instanceof KmjUploadedFile) {
             $document = $this->manager->upload($value, $this->className ? $this->className : get_class($value), $this->additionalPath);
+            
             return $document ? $document->getId() : null;
         }
         
@@ -71,9 +87,12 @@ class DocumentTransformer implements DataTransformerInterface
      */
     public function transform($value) 
     {
-        if (!$value) {
+        if (null === $value) {
+            
             return null;
         }
+        
+        $this->id = $value;
         
         return $this->manager->findById($value);
     }
