@@ -1,5 +1,9 @@
 {% if data is not null %}
-    <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes|raw }}/>
+    {% if data is is_image %}
+        <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes|raw }}/>
+    {% else %}
+        {{ download_link(data, options) }}
+    {% endif %}
 {% else %}
     <img src="{{ asset('bundles/upload/images/no-image.png')}}" {{ attributes|raw }}/>
 {% endif %}

@@ -6,10 +6,13 @@
 
 namespace Kematjaya\UploadBundle\Twig;
 
+use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 use Twig\Environment;
 use Minwork\Helper\Arr;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @package Kematjaya\UploadBundle\Twig
@@ -24,9 +27,37 @@ class ImageExtension extends AbstractExtension
      */
     private $twig;
     
-    public function __construct(Environment $twig) 
+    /**
+     * 
+     * @var DocumentRepositoryInterface
+     */
+    private $repository;
+    
+    public function __construct(DocumentRepositoryInterface $repository, Environment $twig) 
     {
+        $this->repository = $repository;
         $this->twig = $twig;
+    }
+    
+    public function getTests()
+    {
+        return [
+            new TwigTest('is_image', function (string $id) {
+                $document = $this->repository->findOneById($id);
+                if (!$document) {
+                    
+                    return false;
+                }
+                
+                $file = new File(
+                    $document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName()
+                );
+                
+                $imageInfo = getimagesize($file->getRealPath());
+                
+                return false !== $imageInfo;
+            })
+        ];
     }
     
     public function getFunctions()
@@ -38,8 +69,10 @@ class ImageExtension extends AbstractExtension
     
     public function imageLink(string $id = null, array $attribute = []):?string
     {
+        $options = $attribute;
+        $options['label_type'] = DownloadExtension::LABEL_FILENAME;
         return $this->twig->render('@Upload/_image.twig', [
-            'data' => $id, 'attributes' => $this->generateHTMLAttributes($attribute)
+            'data' => $id, 'options' => $options, 'attributes' => $this->generateHTMLAttributes($attribute)
         ]);
     }
     
