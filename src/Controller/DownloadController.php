@@ -18,7 +18,7 @@ class DownloadController extends AbstractController
         try {
             $document = $repository->findOneById($id);
             if (!$document) {
-                throw new \Exception(sprintf('unable to load document with id: %s'. $id));
+                throw new \Exception(sprintf('unable to load document with id: %s', $id));
             }
             
             if (!file_exists($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName())) {
