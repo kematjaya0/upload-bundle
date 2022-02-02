@@ -1,7 +1,7 @@
 {% if data is not null %}
     {% if data is is_image %}
     <a onclick="window.open('{{ path('kmj_upload_download', {id: data })}}', 'newwindow', 'width=800, height=600')">
-        <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes|raw }}/>
+        {{ include("@Upload/_single_image.twig", {data: data, attributes: attributes}) }}
     </a>
     {% else %}
         {{ download_link(data, options) }}

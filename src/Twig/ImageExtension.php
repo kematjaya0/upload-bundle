@@ -63,8 +63,16 @@ class ImageExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
+            new TwigFunction('image_view',[$this, 'imageView'], ['is_safe' => ['html']]),
             new TwigFunction('image_link',[$this, 'imageLink'], ['is_safe' => ['html']])
         ];
+    }
+    
+    public function imageView(string $id = null, array $attribute = []):?string
+    {
+        return $this->twig->render('@Upload/_single_image.twig', [
+            'data' => $id, 'attributes' => $this->generateHTMLAttributes($attribute)
+        ]);
     }
     
     public function imageLink(string $id = null, array $attribute = []):?string

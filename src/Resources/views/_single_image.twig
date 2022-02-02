@@ -1,0 +1,5 @@
+{% if data is is_image %}
+    <img src="{{ path('kmj_upload_download', {id: data })}}" {{ attributes|raw }}/>
+{% else %}
+    <img src="{{ asset('bundles/upload/images/no-image.png')}}" {{ attributes|raw }}/>
+{% endif %}
