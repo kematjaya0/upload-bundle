@@ -68,6 +68,12 @@ class ImageExtension extends AbstractExtension
         ];
     }
     
+    /**
+     * 
+     * @param string $id
+     * @param array $attribute
+     * @return string|null
+     */
     public function imageView(string $id = null, array $attribute = []):?string
     {
         return $this->twig->render('@Upload/_single_image.twig', [
@@ -75,6 +81,12 @@ class ImageExtension extends AbstractExtension
         ]);
     }
     
+    /**
+     * 
+     * @param string $id
+     * @param array $attribute
+     * @return string|null
+     */
     public function imageLink(string $id = null, array $attribute = []):?string
     {
         $options = $attribute;
