@@ -34,6 +34,5 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
     public function save(DocumentInterface $entity): void 
     {
         $this->_em->persist($entity);
-        $this->_em->flush();
     }
 }
