@@ -2,7 +2,8 @@
 
 namespace Kematjaya\UploadBundle\Uploader;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Kematjaya\UploadBundle\Event\PostUploadFileEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -12,7 +13,7 @@ use Kematjaya\Upload\Uploader\FileUploader as Uploader;
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-class FileUploader implements UploaderInterface
+class FileUploader extends Uploader implements UploaderInterface
 {
     /**
      *
@@ -22,9 +23,9 @@ class FileUploader implements UploaderInterface
     
     /**
      *
-     * @var SluggerInterface
+     * @var EventDispatcherInterface
      */
-    private $slugger;
+    private $eventDispatcher;
     
     /**
      *
@@ -32,13 +33,15 @@ class FileUploader implements UploaderInterface
      */
     private $targetDir;
     
-    public function __construct(ContainerBagInterface $bag, ContainerInterface $container, SluggerInterface $slugger)
+    public function __construct(EventDispatcherInterface $eventDispatcher, ContainerInterface $container, SluggerInterface $slugger)
     {
         $this->container = $container;
-        $this->slugger = $slugger;
+        $this->eventDispatcher = $eventDispatcher;
         
-        $configs = $bag->get('upload');
+        $configs = $container->getParameter('upload');
         $this->targetDir = $configs['uploads_dir'];
+        
+        parent::__construct($this->targetDir, $slugger);
     }
     
     public function setTargetDirectory(string $uploadDir):UploaderInterface
@@ -55,8 +58,17 @@ class FileUploader implements UploaderInterface
 
     public function upload(UploadedFile $file, string $directory = null): ?File 
     {
-        $uploader = new Uploader($this->getTargetDirectory(), $this->slugger);
-        return $uploader->upload($file, $directory);
+        $uploadedFile = parent::upload($file, $directory);
+        if (null === $uploadedFile) {
+            
+            return $uploadedFile;
+        }
+        
+        $event = $this->eventDispatcher->dispatch(
+            new PostUploadFileEvent($uploadedFile),
+            PostUploadFileEvent::EVENT_NAME
+        );
+        
+        return $event->getFile();
     }
-
 }

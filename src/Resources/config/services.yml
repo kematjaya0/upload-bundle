@@ -33,3 +33,6 @@ services:
     Kematjaya\UploadBundle\Twig\ImageExtension:
         class: Kematjaya\UploadBundle\Twig\ImageExtension
         tags: ['twig.extension']
+        
+    Kematjaya\UploadBundle\EventSubscriber\ImageOptimationSubscriber: ~
+       
