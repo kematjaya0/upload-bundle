@@ -10,6 +10,7 @@ namespace Kematjaya\UploadBundle\EventSubscriber;
 use Kematjaya\UploadBundle\Event\PostUploadFileEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * Description of ImageOptimationSUbscriber
@@ -18,7 +19,17 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class ImageOptimationSubscriber implements EventSubscriberInterface 
 {
-    //put your code here
+    /**
+     * 
+     * @var array
+     */
+    private $optimizer;
+    
+    public function __construct(ParameterBagInterface $parameterBag) 
+    {
+        $this->optimizer = $parameterBag->get("upload")["optimizer"]["image"];
+    }
+    
     public static function getSubscribedEvents() 
     {
         return [
@@ -37,15 +48,18 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
         
         $mimeInfo = getimagesize($uploadedFile->getRealPath());
         $imageMimeType = $mimeInfo['mime'];
-        $optimizedFile = $this->compressImage($imageMimeType, $uploadedFile, 50);
+        $optimizedFile = $this->compressImage($imageMimeType, $uploadedFile);
         
-        unlink($uploadedFile->getRealPath());
+        if (true === $this->optimizer["remove_origin"]) {
+            unlink($uploadedFile->getRealPath());
+        }
         
         $event->setFile($optimizedFile);
     }
     
-    protected function compressImage(string $mimeType, File $originalFile, float $quality = 50): File
+    protected function compressImage(string $mimeType, File $originalFile): File
     {
+        $quality = $this->optimizer["quality"];
         switch ($mimeType) {
             case 'image/png':
                 $img = imagecreatefrompng($originalFile->getPathname());
