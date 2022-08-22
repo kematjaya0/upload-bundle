@@ -30,7 +30,7 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
         $this->optimizer = $parameterBag->get("upload")["optimizer"]["image"];
     }
     
-    public static function getSubscribedEvents() 
+    public static function getSubscribedEvents():array
     {
         return [
             PostUploadFileEvent::EVENT_NAME => "optimation"

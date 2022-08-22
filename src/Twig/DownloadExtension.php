@@ -48,7 +48,7 @@ class DownloadExtension extends AbstractExtension
         $this->twig = $twig;
     }
     
-    public function getFunctions()
+    public function getFunctions():array
     {
         return [
             new TwigFunction('download_link',[$this, 'downloadLink'], ['is_safe' => ['html']])

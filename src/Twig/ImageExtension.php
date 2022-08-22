@@ -39,7 +39,7 @@ class ImageExtension extends AbstractExtension
         $this->twig = $twig;
     }
     
-    public function getTests()
+    public function getTests():array
     {
         return [
             new TwigTest('is_image', function (string $id) {
@@ -60,7 +60,7 @@ class ImageExtension extends AbstractExtension
         ];
     }
     
-    public function getFunctions()
+    public function getFunctions():array
     {
         return [
             new TwigFunction('image_view',[$this, 'imageView'], ['is_safe' => ['html']]),
