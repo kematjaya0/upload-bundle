@@ -11,7 +11,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
@@ -35,10 +34,28 @@ class KmjFileType extends AbstractType
         $builder->addModelTransformer(new DocumentTransformer($this->documentManager, $options['class_name'], $options['additional_path']));
         
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
-            $file = $event->getForm()->getData();
-            if($file instanceof File and $file->getError()) {
-                $event->getForm()->addError(new FormError($file->getErrorMessage()));
+            $data = $event->getForm()->getData();
+            if (null === $data) {
+                return;
             }
+            
+            $file = $this->documentManager->findById($data);
+            if (null === $file) {
+                return;
+            }
+            
+            if (empty($options['extensions'])) {
+                return;
+            }
+            
+            if (in_array($file->getExtension(), $options['extensions'])) {
+                return;
+            }
+            
+            unlink($file->getRealPath());
+            $event->getForm()->addError(
+                new FormError(sprintf("allowed extension: %s", implode(", ", $options['extensions'])))
+            );
         });
         
         
@@ -46,10 +63,11 @@ class KmjFileType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefined(['additional_path', 'class_name']);
+        $resolver->setDefined(['additional_path', 'class_name', 'extension']);
         $resolver->setDefaults([
             'additional_path' => null,
             'class_name' => null,
+            'extensions' => [],
             'invalid_message' => 'The selected issue does not exist',
         ]);
     }

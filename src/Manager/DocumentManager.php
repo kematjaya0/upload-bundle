@@ -83,4 +83,9 @@ class DocumentManager implements DocumentManagerInterface
             throw $exception;
         }
     }
+    
+    public function remove(string $uuid):void
+    {
+        $this->documentRepo->remove($uuid);
+    }
 }

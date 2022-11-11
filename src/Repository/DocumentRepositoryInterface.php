@@ -14,4 +14,6 @@ interface DocumentRepositoryInterface
     public function findOneById(string $uuid):?DocumentInterface;
     
     public function save(DocumentInterface $entity):void;
+    
+    public function remove(string $uuid):void;
 }

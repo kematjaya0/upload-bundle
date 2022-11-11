@@ -35,4 +35,16 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
     {
         $this->_em->persist($entity);
     }
+
+    public function remove(string $uuid): void 
+    {
+        $document = $this->findOneById($uuid);
+        if (null === $document) {
+            return;
+        }
+        
+        $this->_em->remove($document);
+        $this->_em->flush();
+    }
+
 }

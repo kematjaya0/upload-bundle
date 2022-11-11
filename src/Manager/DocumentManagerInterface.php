@@ -19,4 +19,6 @@ interface DocumentManagerInterface
     public function getUploader():UploaderInterface;
     
     public function findById(string $uuid):?File;
+    
+    public function remove(string $uuid):void;
 }
