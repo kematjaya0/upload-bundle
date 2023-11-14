@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 interface DocumentManagerInterface 
 {
-    public function upload(UploadedFile $file, string $className, string $directory = null):DocumentInterface;
+    public function upload(UploadedFile $file, string $className, string $directory = null, bool $compress=true):DocumentInterface;
     
     public function createDocument(File $file, string $className): DocumentInterface;
     

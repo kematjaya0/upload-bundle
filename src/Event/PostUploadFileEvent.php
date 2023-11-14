@@ -18,29 +18,38 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PostUploadFileEvent extends Event
 {
     const EVENT_NAME = "kematjaya.post_upload_file";
-    
+
     /**
-     * 
+     *
      * @var File
      */
     private $file;
-    
-    public function __construct(File $file) 
+
+    private bool $compress;
+
+    public function __construct(File $file, bool $compress = true)
     {
         $this->file = $file;
+        $this->compress = $compress;
     }
-    
-    public function getFile(): File 
+
+    public function getFile(): File
     {
         return $this->file;
     }
 
-    public function setFile(File $file):self 
+    public function setFile(File $file):self
     {
         $this->file = $file;
-        
+
         return $this;
     }
 
-
+    /**
+     * @return bool
+     */
+    public function isCompress(): bool
+    {
+        return $this->compress;
+    }
 }

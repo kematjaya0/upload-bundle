@@ -17,19 +17,19 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  *
  * @author apple
  */
-class ImageOptimationSubscriber implements EventSubscriberInterface 
+class ImageOptimationSubscriber implements EventSubscriberInterface
 {
     /**
-     * 
+     *
      * @var array
      */
     private $optimizer;
-    
-    public function __construct(ParameterBagInterface $parameterBag) 
+
+    public function __construct(ParameterBagInterface $parameterBag)
     {
         $this->optimizer = $parameterBag->get("upload")["optimizer"]["image"];
     }
-    
+
     public static function getSubscribedEvents():array
     {
         return [
@@ -39,24 +39,27 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
 
     public function optimation(PostUploadFileEvent $event):void
     {
+        if (!$event->isCompress()) {
+            return;
+        }
         $uploadedFile = $event->getFile();
         $allowedImages = ['jpeg', 'gif', 'jpg', 'png'];
         if (!in_array($uploadedFile->getExtension(), $allowedImages)) {
-            
+
             return;
         }
-        
+
         $mimeInfo = getimagesize($uploadedFile->getRealPath());
         $imageMimeType = $mimeInfo['mime'];
         $optimizedFile = $this->compressImage($imageMimeType, $uploadedFile);
-        
+
         if (true === $this->optimizer["remove_origin"]) {
             unlink($uploadedFile->getRealPath());
         }
-        
+
         $event->setFile($optimizedFile);
     }
-    
+
     protected function compressImage(string $mimeType, File $originalFile): File
     {
         $quality = $this->optimizer["quality"];
@@ -73,13 +76,13 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
             default:
                 $img = imagecreatefromjpeg($originalFile->getPathname());
         }
-        
+
         $name = str_replace("." . $originalFile->getExtension(), "", $originalFile->getFilename());
-        $newImagePath = sprintf("%s/%s-optimized.jpg", $originalFile->getPath(), $name);
+        $newImagePath = sprintf("%s/%s-optimized.%s", $originalFile->getPath(), $name, $originalFile->getExtension());
         if (false === imagejpeg($img, $newImagePath, $quality)) {
             throw new \Exception("failed to optimized image.");
         }
-        
+
         return new File($newImagePath);
     }
 

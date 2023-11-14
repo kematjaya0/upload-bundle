@@ -17,83 +17,76 @@ class DocumentTransformer implements DataTransformerInterface
      * @var DocumentManagerInterface
      */
     private $manager;
-    
+
     /**
-     * 
+     *
      * @var string
      */
     private $className;
-    
+
     /**
-     * 
+     *
      * @var string
      */
     private $additionalPath;
-    
+
     /**
-     * 
+     *
      * @var string
      */
     private $id;
-    
-    public function __construct(DocumentManagerInterface $manager, string $className = null,  string $additionalPath = null) 
+
+    private bool $compress;
+
+    public function __construct(DocumentManagerInterface $manager, string $className = null,  string $additionalPath = null, bool $compress = true)
     {
         $this->manager = $manager;
+        $this->compress = $compress;
         $this->className = $className;
         $this->additionalPath = $additionalPath;
     }
-    
-    /**
-     * form file to document
-     * @param type $value
-     * @return File
-     */
-    public function reverseTransform($value) 
+
+    public function reverseTransform($value)
     {
         if (null === $value and null === $this->id) {
-            
+
             return null;
         }
-        
-        
-        
+
+
+
         if (!$value instanceof File) {
             if (null !== $this->id) {
-                
+
                 return $this->id;
             }
-            
+
             return $value;
         }
-        
+
         if ($value->getError()) {
-            
+
             return $value;
         }
-        
+
         if (!$value instanceof KmjUploadedFile) {
-            $document = $this->manager->upload($value, $this->className ? $this->className : get_class($value), $this->additionalPath);
-            
+            $document = $this->manager->upload($value, $this->className ? $this->className : get_class($value), $this->additionalPath, $this->compress);
+
             return $document ? $document->getId() : null;
         }
-        
+
         return null;
     }
 
-    /**
-     * from document to file
-     * @param type $value
-     * @return type
-     */
-    public function transform($value) 
+    public function transform($value)
     {
         if (null === $value) {
-            
+
             return null;
         }
-        
+
         $this->id = $value;
-        
+
         return $this->manager->findById($value);
     }
 
