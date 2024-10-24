@@ -46,7 +46,7 @@ class DocumentTransformer implements DataTransformerInterface
         $this->additionalPath = $additionalPath;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform(mixed $value):mixed
     {
         if (null === $value and null === $this->id) {
 
@@ -78,7 +78,7 @@ class DocumentTransformer implements DataTransformerInterface
         return null;
     }
 
-    public function transform($value)
+    public function transform(mixed $value):mixed
     {
         if (null === $value) {
 
