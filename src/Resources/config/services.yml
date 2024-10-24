@@ -7,6 +7,8 @@ services:
     Kematjaya\Upload\Uploader\UploaderInterface:
         class: Kematjaya\UploadBundle\Uploader\FileUploader
         public: true
+
+    Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
         
     Kematjaya\UploadBundle\Uploader\UploaderInterface:
         class: Kematjaya\UploadBundle\Uploader\FileUploader
