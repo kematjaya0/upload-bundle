@@ -33,7 +33,7 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
 
     public function save(DocumentInterface $entity): void 
     {
-        $this->_em->persist($entity);
+        $this->getEntityManager()->persist($entity);
     }
 
     public function remove(string $uuid): void 
@@ -43,8 +43,8 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
             return;
         }
         
-        $this->_em->remove($document);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($document);
+        $this->getEntityManager()->flush();
     }
 
 }
