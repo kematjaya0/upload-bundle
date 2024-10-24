@@ -17,12 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class KmjFileType extends AbstractType
 {
-
-    /**
-     *
-     * @var DocumentManagerInterface
-     */
-    private $documentManager;
+    private DocumentManagerInterface $documentManager;
 
     public function __construct(DocumentManagerInterface $documentManager)
     {

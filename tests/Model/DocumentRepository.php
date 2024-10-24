@@ -26,4 +26,8 @@ class DocumentRepository implements DocumentRepositoryInterface
         
     }
 
+    public function remove(string $uuid): void
+    {
+        // TODO: Implement remove() method.
+    }
 }

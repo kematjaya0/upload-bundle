@@ -15,23 +15,9 @@ use Kematjaya\Upload\Uploader\FileUploader as Uploader;
  */
 class FileUploader extends Uploader implements UploaderInterface
 {
-    /**
-     *
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     *
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     *
-     * @var string
-     */
-    private $targetDir;
+    private ContainerInterface $container;
+    private EventDispatcherInterface $eventDispatcher;
+    private string $targetDir;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, ContainerInterface $container, SluggerInterface $slugger)
     {

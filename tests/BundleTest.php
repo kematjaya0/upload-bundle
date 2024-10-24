@@ -22,7 +22,7 @@ use Kematjaya\UploadBundle\Uploader\UploaderInterface;
  */
 class BundleTest extends WebTestCase
 {
-    public static function getKernelClass() 
+    public static function getKernelClass() :string
     {
         return UploadBundleTest::class;
     }

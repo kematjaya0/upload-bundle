@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class UploadBundleTest extends Kernel
 {
     
-    public function registerBundles() 
+    public function registerBundles() :array
     {
         return [
             new UploadBundle(),

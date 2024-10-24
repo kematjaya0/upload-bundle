@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class DownloadController extends AbstractController
 {
-    public function download(DocumentRepositoryInterface $repository, string $id)
+    public function download(DocumentRepositoryInterface $repository, string $id):Response
     {
         try {
             $document = $repository->findOneById($id);
