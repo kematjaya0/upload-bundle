@@ -3,49 +3,30 @@
 namespace Kematjaya\UploadBundle\Entity;
 
 use Kematjaya\UploadBundle\Repository\DocumentRepository;
-use Kematjaya\UploadBundle\Entity\AbstractDocument;
-use Kematjaya\UploadBundle\Entity\DocumentInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\File\File;
 use DateTimeInterface;
+use Symfony\Component\Uid\Uuid;
 
-/**
- * @ORM\Table(name="kmj_document")
- * @ORM\Entity(repositoryClass=DocumentRepository::class)
- */
+#[ORM\Entity(repositoryClass: DocumentRepository::class)]
+#[ORM\Table(name: "kmj_document")]
 class Document extends AbstractDocument
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\CustomIdGenerator(class=Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator::class)
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
+    #[ORM\Column(length: 255,type: "string")]
     private $class_name;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $created_at;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255,type: "string")]
     private $file_name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255,type: "string")]
     private $extension;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(length: 255,type: "string", nullable: true)]
     private $path;
 
     public function getId(): ?string
@@ -113,7 +94,7 @@ class Document extends AbstractDocument
         return $this;
     }
 
-    public static function fromFile(File $file): DocumentInterface 
+    public static function fromFile(File $file): DocumentInterface
     {
         return (new Document())
                 ->setExtension($file->getExtension())
