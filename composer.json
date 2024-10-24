@@ -24,7 +24,7 @@
         "symfony/uid": "^6.0|^7.0",
         "symfony/doctrine-bridge": "^6.0|^7.0",
         "minwork/array": "^1.13",
-        "symfony/event-dispatcher": "^5.4"
+        "symfony/event-dispatcher": "^6.0|^7.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.0|^7.0",
