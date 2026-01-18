@@ -15,15 +15,10 @@ use Kematjaya\Upload\Uploader\FileUploader as Uploader;
  */
 class FileUploader extends Uploader implements UploaderInterface
 {
-    private ContainerInterface $container;
-    private EventDispatcherInterface $eventDispatcher;
     private string $targetDir;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, ContainerInterface $container, SluggerInterface $slugger)
+    public function __construct(private EventDispatcherInterface $eventDispatcher, private ContainerInterface $container, private SluggerInterface $slugger)
     {
-        $this->container = $container;
-        $this->eventDispatcher = $eventDispatcher;
-
         $configs = $container->getParameter('upload');
         $this->targetDir = $configs['uploads_dir'];
 

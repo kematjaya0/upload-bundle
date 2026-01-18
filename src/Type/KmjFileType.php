@@ -17,11 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class KmjFileType extends AbstractType
 {
-    private DocumentManagerInterface $documentManager;
 
-    public function __construct(DocumentManagerInterface $documentManager)
+    public function __construct(private DocumentManagerInterface $documentManager)
     {
-        $this->documentManager = $documentManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

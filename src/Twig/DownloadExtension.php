@@ -15,18 +15,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DownloadExtension extends AbstractExtension
 {
-
-    private Environment $twig;
-    private TranslatorInterface $translator;
-    private DocumentRepositoryInterface $repository;
     const LABEL_FILENAME = 'filename';
     const LABEL_DEFAULT = 'default';
 
-    public function __construct(Environment $twig, DocumentRepositoryInterface $repository, TranslatorInterface $translator)
+    public function __construct(private Environment $twig, private DocumentRepositoryInterface $repository, private TranslatorInterface $translator)
     {
-        $this->repository = $repository;
-        $this->translator = $translator;
-        $this->twig = $twig;
     }
 
     public function getFunctions(): array

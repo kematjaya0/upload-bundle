@@ -14,22 +14,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class DocumentManager implements DocumentManagerInterface
 {
-    /**
-     *
-     * @var UploaderInterface
-     */
-    private $uploader;
 
-    /**
-     *
-     * @var DocumentRepositoryInterface
-     */
-    private $documentRepo;
-
-    public function __construct(UploaderInterface $uploader, DocumentRepositoryInterface $documentRepo)
+    public function __construct(private UploaderInterface $uploader, private DocumentRepositoryInterface $documentRepo)
     {
-        $this->uploader = $uploader;
-        $this->documentRepo = $documentRepo;
     }
 
     public function getUploader():UploaderInterface

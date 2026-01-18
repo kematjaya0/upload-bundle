@@ -1,8 +1,5 @@
 <?php
 
-/**
- * This file is part of the upload-bundle.
- */
 
 namespace Kematjaya\UploadBundle\Twig;
 
@@ -21,22 +18,9 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class ImageExtension extends AbstractExtension 
 {
-    /**
-     * 
-     * @var Environment
-     */
-    private $twig;
     
-    /**
-     * 
-     * @var DocumentRepositoryInterface
-     */
-    private $repository;
-    
-    public function __construct(DocumentRepositoryInterface $repository, Environment $twig) 
+    public function __construct(private DocumentRepositoryInterface $repository, private Environment $twig)
     {
-        $this->repository = $repository;
-        $this->twig = $twig;
     }
     
     public function getTests():array

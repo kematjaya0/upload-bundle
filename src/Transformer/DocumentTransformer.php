@@ -12,38 +12,9 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class DocumentTransformer implements DataTransformerInterface
 {
-    /**
-     *
-     * @var DocumentManagerInterface
-     */
-    private $manager;
 
-    /**
-     *
-     * @var string
-     */
-    private $className;
-
-    /**
-     *
-     * @var string
-     */
-    private $additionalPath;
-
-    /**
-     *
-     * @var string
-     */
-    private $id;
-
-    private bool $compress;
-
-    public function __construct(DocumentManagerInterface $manager, string $className = null,  string $additionalPath = null, bool $compress = true)
+    public function __construct(private DocumentManagerInterface $manager, private ?string $className = null,  private ?string $additionalPath = null, private bool $compress = true)
     {
-        $this->manager = $manager;
-        $this->compress = $compress;
-        $this->className = $className;
-        $this->additionalPath = $additionalPath;
     }
 
     public function reverseTransform(mixed $value):mixed

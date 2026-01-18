@@ -15,22 +15,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class DocumentExtension extends AbstractTypeExtension
 {
-    /**
-     *
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
     
-    /**
-     *
-     * @var DocumentManagerInterface 
-     */
-    private $repository;
-    
-    public function __construct(UrlGeneratorInterface $urlGenerator, DocumentRepositoryInterface $repository) 
+    public function __construct(private UrlGeneratorInterface $urlGenerator, private DocumentRepositoryInterface $repository)
     {
-        $this->urlGenerator = $urlGenerator;
-        $this->repository = $repository;
     }
     
     public static function getExtendedTypes(): iterable 

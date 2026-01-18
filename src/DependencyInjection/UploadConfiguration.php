@@ -27,7 +27,7 @@ class UploadConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    public function optimizer(NodeBuilder $node)
+    public function optimizer(NodeBuilder $node):void
     {
         $node
             ->arrayNode('optimizer')->addDefaultsIfNotSet()
