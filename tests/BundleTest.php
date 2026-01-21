@@ -9,6 +9,7 @@ use Kematjaya\UploadBundle\Transformer\DocumentTransformer;
 use Kematjaya\UploadBundle\Manager\DocumentManager;
 use Kematjaya\UploadBundle\Manager\DocumentManagerInterface;
 use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
+use PHPUnit\Framework\Attributes\Depends;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -40,6 +41,7 @@ class BundleTest extends WebTestCase
     /**
      * @depends testLoadBundle
      */
+    #[Depends("testLoadBundle")]
     public function testUploadFile(UploaderInterface $uploader):File
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'file';
@@ -62,6 +64,8 @@ class BundleTest extends WebTestCase
      * @depends testLoadBundle
      * @depends testUploadFile
      */
+    #[Depends("testLoadBundle")]
+    #[Depends("testUploadFile")]
     public function testLoadDocumentManager(UploaderInterface $uploader, File $file):DocumentManagerInterface
     {
         $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
@@ -77,6 +81,8 @@ class BundleTest extends WebTestCase
      * @depends testUploadFile
      * @depends testLoadDocumentManager
      */
+    #[Depends("testUploadFile")]
+    #[Depends("testLoadDocumentManager")]
     public function testDocumentManager(File $file, DocumentManagerInterface $manager):DocumentInterface
     {
         $document = $manager->createDocument($file, "aaaa");
@@ -89,6 +95,7 @@ class BundleTest extends WebTestCase
      * 
      * @depends testLoadDocumentManager
      */
+    #[Depends("testLoadDocumentManager")]
     public function testUploadViaManager(DocumentManagerInterface $manager)
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'file';
@@ -108,6 +115,9 @@ class BundleTest extends WebTestCase
      * @depends testLoadBundle
      * @depends testUploadFile
      */
+    #[Depends("testDocumentManager")]
+    #[Depends("testLoadBundle")]
+    #[Depends("testUploadFile")]
     public function testGetUploadedFile(DocumentInterface $document, UploaderInterface $uploader, File $file)
     {
         $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
@@ -125,6 +135,9 @@ class BundleTest extends WebTestCase
      * @depends testLoadBundle
      * @depends testUploadFile
      */
+    #[Depends("testDocumentManager")]
+    #[Depends("testLoadBundle")]
+    #[Depends("testUploadFile")]
     public function testTransformer(DocumentInterface $document, UploaderInterface $uploader, File $file)
     {
         $document = Document::fromFile($file);
@@ -137,5 +150,27 @@ class BundleTest extends WebTestCase
         
         $transformer = new DocumentTransformer($manager);
         $this->assertInstanceOf(File::class, $transformer->transform($document->getId()));
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->restoreExceptionHandler();
+    }
+
+    protected function restoreExceptionHandler(): void
+    {
+        while (true) {
+            $previousHandler = set_exception_handler(static fn() => null);
+
+            restore_exception_handler();
+
+            if ($previousHandler === null) {
+                break;
+            }
+
+            restore_exception_handler();
+        }
     }
 }
