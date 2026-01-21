@@ -53,10 +53,10 @@ class FileUploader implements UploaderInterface
         return $this->targetDir;
     }
 
-    public function upload(UploadedFile $file, string $directory = null): ?File 
+    public function upload(UploadedFile $file, string $directory = null, bool $compress = true): ?File
     {
         $uploader = new Uploader($this->getTargetDirectory(), $this->slugger);
-        return $uploader->upload($file, $directory);
+        return $uploader->upload($file, $directory, $compress);
     }
 
 }
