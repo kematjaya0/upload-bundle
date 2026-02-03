@@ -12,7 +12,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class DocumentTransformer implements DataTransformerInterface
 {
-
+    private mixed $id = null;
     public function __construct(private DocumentManagerInterface $manager, private ?string $className = null,  private ?string $additionalPath = null, private bool $compress = true)
     {
     }
