@@ -41,12 +41,13 @@ class DownloadExtension extends AbstractExtension
             $options['label_type'] = self::LABEL_DEFAULT;
             $options['label'] = $this->translator->trans('download');
         }
+        $document = $id ? $this->repository->findOneById($id) : null;
+        if (!$document) {
+            return "";
+        }
 
         if (self::LABEL_FILENAME === $options['label_type']) {
-            $document = $id ? $this->repository->findOneById($id) : null;
-            if ($document) {
-                $options['label'] = $document->getFileName();
-            }
+            $options['label'] = $document->getFileName();
         }
 
         foreach ($options['attr'] as $name => $value) {
@@ -54,6 +55,9 @@ class DownloadExtension extends AbstractExtension
         }
 
         $options['attr'] = implode(" ", array_values($options['attr']));
+        if (!isset($options['label'])) {
+            $options['label'] = $this->translator->trans('download');
+        }
 
         return $this->twig->render('@Upload/_download.twig', [
             'data' => $id, 'options' => $options
