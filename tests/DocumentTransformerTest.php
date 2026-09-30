@@ -8,6 +8,7 @@ use Kematjaya\UploadBundle\Manager\DocumentManagerInterface;
 use Kematjaya\UploadBundle\Transformer\DocumentTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Uid\Uuid;
 
 class DocumentTransformerTest extends TestCase
 {
@@ -34,6 +35,18 @@ class DocumentTransformerTest extends TestCase
         $transformer->transform('doc-1');
         $this->assertSame('doc-1', $transformer->reverseTransform(null));
         $this->assertSame('doc-1', $transformer->reverseTransform((new KmjUploadedFile(__FILE__, 'a.php'))->setId('doc-1')));
+    }
+
+    public function testCurrentIdKeepsItsOriginalType(): void
+    {
+        $uuid = Uuid::v4();
+        $manager = $this->createMock(DocumentManagerInterface::class);
+        $manager->expects($this->once())->method('findById')->with((string) $uuid)->willReturn(null);
+
+        $transformer = new DocumentTransformer($manager);
+        $transformer->transform($uuid);
+
+        $this->assertSame($uuid, $transformer->reverseTransform(null));
     }
 
     public function testReverseTransformUploadsNewFile(): void

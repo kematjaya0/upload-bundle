@@ -14,8 +14,9 @@ class DocumentTransformer implements DataTransformerInterface
 {
     /**
      * id dokumen yang sedang tersimpan, dipakai lagi bila form dikirim tanpa file baru.
+     * Bertipe mixed agar nilai aslinya (mis. objek Uuid) dikembalikan tanpa diubah jadi string.
      */
-    private ?string $id = null;
+    private mixed $id = null;
 
     public function __construct(
         private readonly DocumentManagerInterface $manager,
