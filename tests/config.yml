@@ -1,0 +1,35 @@
+framework:
+    test: true
+    secret: upload-bundle-test
+    http_method_override: false
+    handle_all_throwables: true
+    php_errors:
+        log: true
+    router:
+        resource: '@UploadBundle/Resources/routes/all.yml'
+        utf8: true
+    assets: ~
+
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        path: '%kernel.cache_dir%/../test.sqlite'
+    orm:
+        auto_generate_proxy_classes: true
+        auto_mapping: true
+
+upload:
+    uploads_dir: '%kernel.cache_dir%/../uploads'
+
+services:
+    _defaults:
+        public: true
+
+    test.document_manager:
+        alias: Kematjaya\UploadBundle\Manager\DocumentManagerInterface
+
+    test.uploader:
+        alias: Kematjaya\UploadBundle\Uploader\UploaderInterface
+
+    test.document_repository:
+        alias: Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface

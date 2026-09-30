@@ -4,7 +4,6 @@ namespace Kematjaya\UploadBundle\Controller;
 
 use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -13,22 +12,18 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class DownloadController extends AbstractController
 {
-    public function download(DocumentRepositoryInterface $repository, string $id)
+    public function download(DocumentRepositoryInterface $repository, string $id): Response
     {
-        try {
-            $document = $repository->findOneById($id);
-            if (!$document) {
-                throw new \Exception(sprintf('unable to load document with id: %s', $id));
-            }
-            
-            if (!file_exists($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName())) {
-                throw new \Exception('File not found !!');
-            }
-            $file = new File($document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName());
-            
-            return $this->file($file, null, ResponseHeaderBag::DISPOSITION_INLINE);
-        }catch (\Exception $exception){
-            return new Response($exception->getMessage());
+        $document = $repository->findOneById($id);
+        if (null === $document) {
+            return new Response(sprintf('unable to load document with id: %s', $id), Response::HTTP_NOT_FOUND);
         }
+
+        $path = $document->getPath().DIRECTORY_SEPARATOR.$document->getFileName();
+        if (!is_file($path)) {
+            return new Response('File not found !!', Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->file($path, null, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

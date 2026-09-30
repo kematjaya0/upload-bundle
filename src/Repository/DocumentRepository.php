@@ -2,11 +2,10 @@
 
 namespace Kematjaya\UploadBundle\Repository;
 
-use Kematjaya\UploadBundle\Entity\Document;
-use Kematjaya\UploadBundle\Entity\DocumentInterface;
-use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Kematjaya\UploadBundle\Entity\Document;
+use Kematjaya\UploadBundle\Entity\DocumentInterface;
 
 /**
  * @method Document|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,30 +20,29 @@ class DocumentRepository extends ServiceEntityRepository implements DocumentRepo
         parent::__construct($registry, Document::class);
     }
 
-    public function createDocumentObject(): DocumentInterface 
+    public function createDocumentObject(): DocumentInterface
     {
         return new Document();
     }
 
-    public function findOneById(string $uuid): ?DocumentInterface 
+    public function findOneById(string $uuid): ?DocumentInterface
     {
         return $this->find($uuid);
     }
 
-    public function save(DocumentInterface $entity): void 
+    public function save(DocumentInterface $entity): void
     {
-        $this->_em->persist($entity);
+        $this->getEntityManager()->persist($entity);
     }
 
-    public function remove(string $uuid): void 
+    public function remove(string $uuid): void
     {
         $document = $this->findOneById($uuid);
         if (null === $document) {
             return;
         }
-        
-        $this->_em->remove($document);
-        $this->_em->flush();
-    }
 
+        $this->getEntityManager()->remove($document);
+        $this->getEntityManager()->flush();
+    }
 }

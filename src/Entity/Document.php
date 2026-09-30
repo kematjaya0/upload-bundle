@@ -2,55 +2,41 @@
 
 namespace Kematjaya\UploadBundle\Entity;
 
-use Kematjaya\UploadBundle\Repository\DocumentRepository;
-use Kematjaya\UploadBundle\Entity\AbstractDocument;
-use Kematjaya\UploadBundle\Entity\DocumentInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Kematjaya\UploadBundle\Repository\DocumentRepository;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\File\File;
-use DateTimeInterface;
+use Symfony\Component\Uid\Uuid;
 
-/**
- * @ORM\Table(name="kmj_document")
- * @ORM\Entity(repositoryClass=DocumentRepository::class)
- */
+#[ORM\Entity(repositoryClass: DocumentRepository::class)]
+#[ORM\Table(name: 'kmj_document')]
 class Document extends AbstractDocument
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\CustomIdGenerator(class=Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator::class)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?Uuid $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $class_name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $class_name = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $created_at;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $created_at = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $file_name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $file_name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $extension;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $extension = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $path;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $path = null;
 
     public function getId(): ?string
     {
-        return $this->id;
+        return $this->id?->toRfc4122();
     }
 
     public function getClassName(): ?string
@@ -65,7 +51,7 @@ class Document extends AbstractDocument
         return $this;
     }
 
-    public function getCreatedAt(): DateTimeInterface
+    public function getCreatedAt(): \DateTimeInterface
     {
         return $this->created_at;
     }
@@ -113,12 +99,11 @@ class Document extends AbstractDocument
         return $this;
     }
 
-    public static function fromFile(File $file): DocumentInterface 
+    public static function fromFile(File $file): DocumentInterface
     {
-        return (new Document())
-                ->setExtension($file->getExtension())
-                ->setFileName($file->getFilename())
-                ->setPath($file->getPath());
+        return (new self())
+            ->setExtension($file->getExtension())
+            ->setFileName($file->getFilename())
+            ->setPath($file->getPath());
     }
-
 }

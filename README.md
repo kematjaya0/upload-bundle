@@ -60,3 +60,14 @@ twig:
         ......
     ]
 ```
+
+## Branch 6.4
+
+PHP >= 8.1, Symfony 6.4. Entity `Document` memakai mapping attribute (`#[ORM\Entity]`), bukan annotation docblock.
+
+## Test
+```
+LOCAL_PACKAGES="upload@6.4.0" sh ../test.sh upload-bundle all
+EXTRA_REQUIRE="doctrine/orm:^2.14" LOCAL_PACKAGES="upload@6.4.0" sh ../test.sh upload-bundle 8.1 6.4
+```
+

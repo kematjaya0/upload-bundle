@@ -2,140 +2,118 @@
 
 namespace Kematjaya\UploadBundle\Tests;
 
-use Kematjaya\UploadBundle\Tests\Model\Document;
-use Kematjaya\UploadBundle\Tests\UploadBundleTest;
-use Kematjaya\UploadBundle\Entity\DocumentInterface;
-use Kematjaya\UploadBundle\Transformer\DocumentTransformer;
-use Kematjaya\UploadBundle\Manager\DocumentManager;
-use Kematjaya\UploadBundle\Manager\DocumentManagerInterface;
-use Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Kematjaya\UploadBundle\Uploader\FileUploader;
 use Kematjaya\Upload\Uploader\UploaderInterface as BaseInterface;
-use Kematjaya\UploadBundle\Uploader\UploaderInterface;
+use Kematjaya\UploadBundle\Entity\Document;
+use Kematjaya\UploadBundle\File\KmjUploadedFile;
+use Kematjaya\UploadBundle\Uploader\FileUploader;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-class BundleTest extends WebTestCase
+class BundleTest extends BundleTestCase
 {
-    public static function getKernelClass() 
+    public function testUploaderIsSharedService(): void
     {
-        return UploadBundleTest::class;
+        $uploader = static::getContainer()->get(BaseInterface::class);
+
+        $this->assertInstanceOf(FileUploader::class, $uploader);
+        $this->assertSame($uploader, static::getContainer()->get('test.uploader'));
+        $this->assertSame($uploader, $this->manager()->getUploader());
+        $this->assertSame($this->uploadsDir(), $uploader->getTargetDirectory());
     }
-    
-    public function testLoadBundle(): UploaderInterface
+
+    public function testUploadCreatesDocument(): void
     {
-        $client = parent::createClient();
-        $container = $client->getContainer();
-        
-        $this->assertInstanceOf(FileUploader::class, $container->get(BaseInterface::class));
-        
-        return $container->get(BaseInterface::class);
+        $document = $this->upload($this->pdfFile());
+
+        $this->assertInstanceOf(Document::class, $document);
+        $this->assertTrue(Uuid::isValid($document->getId()));
+        $this->assertSame('App\Entity\Foo', $document->getClassName());
+        $this->assertSame('pdf', $document->getExtension());
+        $this->assertMatchesRegularExpression('/^surat-jalan-[0-9a-f]+\.pdf$/', $document->getFileName());
+        $this->assertSame(realpath($this->uploadsDir()), realpath($document->getPath()));
+        $this->assertFileExists($document->getPath().'/'.$document->getFileName());
+
+        $this->entityManager()->clear();
+        $found = static::getContainer()->get('test.document_repository')->findOneById($document->getId());
+        $this->assertSame($document->getFileName(), $found->getFileName());
     }
-    
-    /**
-     * @depends testLoadBundle
-     */
-    public function testUploadFile(UploaderInterface $uploader):File
+
+    public function testUploadToAdditionalPath(): void
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'file';
-        $fileName = $filePath . DIRECTORY_SEPARATOR . 'test.pdf';
-        $targetFile = 'test-upload.pdf';
-        $fileSystem = new Filesystem();
-        $fileSystem->copy($fileName, $filePath . DIRECTORY_SEPARATOR . $targetFile);
-        $file = new UploadedFile( $filePath . DIRECTORY_SEPARATOR . $targetFile, $targetFile, null, null, true);
-        
-        $uploader->setTargetDirectory(__DIR__ . DIRECTORY_SEPARATOR . 'uploads');
-        $uploadedFile = $uploader->upload($file);
-        
-        $this->assertInstanceOf(File::class, $uploadedFile);
-        
-        return $uploadedFile;
+        $document = $this->manager()->upload($this->pdfFile(), 'Foo', 'surat/2026');
+
+        $this->assertSame(realpath($this->uploadsDir().'/surat/2026'), realpath($document->getPath()));
     }
-    
-    /**
-     * 
-     * @depends testLoadBundle
-     * @depends testUploadFile
-     */
-    public function testLoadDocumentManager(UploaderInterface $uploader, File $file):DocumentManagerInterface
+
+    public function testSetTargetDirectoryIsUsedForUpload(): void
     {
-        $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
-            'createDocumentObject' => new Document(),
-            'findOneById' => Document::fromFile($file)
-        ]);
-        
-        $this->assertTrue(true);
-        return new DocumentManager($uploader, $documentRepo);
+        $target = AppKernel::workDir().'/uploads/lain';
+        static::getContainer()->get('test.uploader')->setTargetDirectory($target);
+
+        $document = $this->manager()->upload($this->pdfFile(), 'Foo');
+
+        $this->assertSame(realpath($target), realpath($document->getPath()));
     }
-    
-    /**
-     * @depends testUploadFile
-     * @depends testLoadDocumentManager
-     */
-    public function testDocumentManager(File $file, DocumentManagerInterface $manager):DocumentInterface
+
+    public function testFindById(): void
     {
-        $document = $manager->createDocument($file, "aaaa");
-        $this->assertInstanceOf(DocumentInterface::class, $document);
-        
-        return $document;
+        $document = $this->upload($this->pdfFile());
+
+        $file = $this->manager()->findById($document->getId());
+        $this->assertInstanceOf(KmjUploadedFile::class, $file);
+        $this->assertSame($document->getId(), $file->getId());
+        $this->assertSame($document->getFileName(), $file->getClientOriginalName());
+
+        $this->assertNull($this->manager()->findById((string) Uuid::v4()));
     }
-    
-    /**
-     * 
-     * @depends testLoadDocumentManager
-     */
-    public function testUploadViaManager(DocumentManagerInterface $manager)
+
+    public function testFindByIdWhenFileIsMissingOnDisk(): void
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'file';
-        $fileName = $filePath . DIRECTORY_SEPARATOR . 'test.pdf';
-        $targetFile = 'test-upload.pdf';
-        $fileSystem = new Filesystem();
-        $fileSystem->copy($fileName, $filePath . DIRECTORY_SEPARATOR . $targetFile);
-        $file = new UploadedFile( $filePath . DIRECTORY_SEPARATOR . $targetFile, $targetFile, null, null, true);
-        
-        $document = $manager->upload($file, 'aaa');
-        
-        $this->assertInstanceOf(DocumentInterface::class, $document);
+        $document = $this->upload($this->pdfFile());
+        unlink($document->getPath().'/'.$document->getFileName());
+
+        $this->assertNull($this->manager()->findById($document->getId()));
     }
-    
-    /**
-     * @depends testDocumentManager
-     * @depends testLoadBundle
-     * @depends testUploadFile
-     */
-    public function testGetUploadedFile(DocumentInterface $document, UploaderInterface $uploader, File $file)
+
+    public function testRemove(): void
     {
-        $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
-            'createDocumentObject' => new Document(),
-            'findOneById' => Document::fromFile($file)
-        ]);
-        
-        $manager = new DocumentManager($uploader, $documentRepo);
-        
-        $this->assertInstanceOf(File::class, $manager->findById($document->getId()));
+        $document = $this->upload($this->pdfFile());
+        $id = $document->getId();
+
+        $this->manager()->remove($id);
+        $this->manager()->remove((string) Uuid::v4());
+
+        $this->entityManager()->clear();
+        $this->assertNull(static::getContainer()->get('test.document_repository')->findOneById($id));
     }
-    
-    /**
-     * @depends testDocumentManager
-     * @depends testLoadBundle
-     * @depends testUploadFile
-     */
-    public function testTransformer(DocumentInterface $document, UploaderInterface $uploader, File $file)
+
+    public function testImageIsCompressedInItsOwnFormat(): void
     {
-        $document = Document::fromFile($file);
-        $documentRepo = $this->createConfiguredMock(DocumentRepositoryInterface::class, [
-            'createDocumentObject' => new Document(),
-            'findOneById' => $document
-        ]);
-        
-        $manager = new DocumentManager($uploader, $documentRepo);
-        
-        $transformer = new DocumentTransformer($manager);
-        $this->assertInstanceOf(File::class, $transformer->transform($document->getId()));
+        $document = $this->upload($this->pngFile());
+
+        $this->assertStringEndsWith('-optimized.png', $document->getFileName());
+        $path = $document->getPath().'/'.$document->getFileName();
+        $this->assertSame('image/png', getimagesize($path)['mime']);
+        $this->assertCount(1, glob($document->getPath().'/*.png'), 'file asli dihapus setelah kompresi');
+    }
+
+    public function testImageIsNotCompressedWhenDisabled(): void
+    {
+        $document = $this->upload($this->pngFile(), false);
+
+        $this->assertStringNotContainsString('-optimized', $document->getFileName());
+    }
+
+    public function testDocumentFromFile(): void
+    {
+        $document = Document::fromFile(new File(__DIR__.'/file/test.pdf'));
+
+        $this->assertSame('test.pdf', $document->getFileName());
+        $this->assertSame('pdf', $document->getExtension());
+        $this->assertSame(__DIR__.'/file', $document->getPath());
+        $this->assertNull($document->getId());
     }
 }

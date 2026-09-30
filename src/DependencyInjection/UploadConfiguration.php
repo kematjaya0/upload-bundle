@@ -11,23 +11,22 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class UploadConfiguration implements ConfigurationInterface
 {
-    
-    public function getConfigTreeBuilder(): TreeBuilder 
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('upload');
         $rootNode = $treeBuilder->getRootNode();
-        
+
         $this->optimizer($rootNode->children());
-        
+
         $rootNode
             ->children()
                 ->scalarNode('uploads_dir')->defaultValue('%kernel.project_dir%/docs')->end()
             ->end();
-        
+
         return $treeBuilder;
     }
 
-    public function optimizer(NodeBuilder $node)
+    public function optimizer(NodeBuilder $node): void
     {
         $node
             ->arrayNode('optimizer')->addDefaultsIfNotSet()

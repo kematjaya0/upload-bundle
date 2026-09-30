@@ -1,60 +1,57 @@
 <?php
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
- */
-
 namespace Kematjaya\UploadBundle\EventSubscriber;
 
 use Kematjaya\UploadBundle\Event\PostUploadFileEvent;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
- * Description of ImageOptimationSUbscriber
- *
  * @author apple
  */
 class ImageOptimationSubscriber implements EventSubscriberInterface
 {
+    private const ALLOWED_EXTENSIONS = ['jpeg', 'gif', 'jpg', 'png'];
+
     /**
-     *
-     * @var array
+     * @var array{remove_origin: bool, quality: int|string}
      */
-    private $optimizer;
+    private array $optimizer;
 
     public function __construct(ParameterBagInterface $parameterBag)
     {
-        $this->optimizer = $parameterBag->get("upload")["optimizer"]["image"];
+        $this->optimizer = $parameterBag->get('upload')['optimizer']['image'];
     }
 
-    public static function getSubscribedEvents():array
+    public static function getSubscribedEvents(): array
     {
         return [
-            PostUploadFileEvent::EVENT_NAME => "optimation"
+            PostUploadFileEvent::EVENT_NAME => 'optimation',
         ];
     }
 
-    public function optimation(PostUploadFileEvent $event):void
+    public function optimation(PostUploadFileEvent $event): void
     {
-        if (!$event->isCompress()) {
+        if (!$event->isCompress() || !extension_loaded('gd')) {
             return;
         }
+
         $uploadedFile = $event->getFile();
-        $allowedImages = ['jpeg', 'gif', 'jpg', 'png'];
-        if (!in_array($uploadedFile->getExtension(), $allowedImages)) {
-
+        if (!in_array(strtolower($uploadedFile->getExtension()), self::ALLOWED_EXTENSIONS, true)) {
             return;
         }
 
-        $mimeInfo = getimagesize($uploadedFile->getRealPath());
-        $imageMimeType = $mimeInfo['mime'];
-        $optimizedFile = $this->compressImage($imageMimeType, $uploadedFile);
+        // berekstensi gambar tetapi isinya bukan gambar: biarkan apa adanya
+        $imageInfo = @getimagesize($uploadedFile->getPathname());
+        if (false === $imageInfo) {
+            return;
+        }
 
-        if (true === $this->optimizer["remove_origin"]) {
-            unlink($uploadedFile->getRealPath());
+        $optimizedFile = $this->compressImage($imageInfo['mime'], $uploadedFile);
+
+        if (true === $this->optimizer['remove_origin']) {
+            unlink($uploadedFile->getPathname());
         }
 
         $event->setFile($optimizedFile);
@@ -62,28 +59,43 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
 
     protected function compressImage(string $mimeType, File $originalFile): File
     {
-        $quality = $this->optimizer["quality"];
-        switch ($mimeType) {
-            case 'image/png':
-                $img = imagecreatefrompng($originalFile->getPathname());
-                break;
-            case 'image/jpeg':
-                $img = imagecreatefromjpeg($originalFile->getPathname());
-                break;
-            case 'image/gif':
-                $img = imagecreatefromgif($originalFile->getPathname());
-                break;
-            default:
-                $img = imagecreatefromjpeg($originalFile->getPathname());
+        $quality = max(0, min(100, (int) $this->optimizer['quality']));
+        $image = match ($mimeType) {
+            'image/png' => imagecreatefrompng($originalFile->getPathname()),
+            'image/gif' => imagecreatefromgif($originalFile->getPathname()),
+            default => imagecreatefromjpeg($originalFile->getPathname()),
+        };
+        if (false === $image) {
+            throw new \RuntimeException('failed to optimized image.');
         }
 
-        $name = str_replace("." . $originalFile->getExtension(), "", $originalFile->getFilename());
-        $newImagePath = sprintf("%s/%s-optimized.%s", $originalFile->getPath(), $name, $originalFile->getExtension());
-        if (false === imagejpeg($img, $newImagePath, $quality)) {
-            throw new \Exception("failed to optimized image.");
+        $newImagePath = sprintf(
+            '%s/%s-optimized.%s',
+            $originalFile->getPath(),
+            $originalFile->getBasename('.'.$originalFile->getExtension()),
+            $originalFile->getExtension()
+        );
+
+        // format asli dipertahankan, supaya isi file cocok dengan ekstensinya
+        $saved = match ($mimeType) {
+            'image/png' => $this->savePng($image, $newImagePath, $quality),
+            'image/gif' => imagegif($image, $newImagePath),
+            default => imagejpeg($image, $newImagePath, $quality),
+        };
+
+        if (false === $saved) {
+            throw new \RuntimeException('failed to optimized image.');
         }
 
         return new File($newImagePath);
     }
 
+    private function savePng(\GdImage $image, string $path, int $quality): bool
+    {
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+
+        // PNG lossless: quality 0-100 dipetakan ke level kompresi 9-0
+        return imagepng($image, $path, (int) round((100 - $quality) * 9 / 100));
+    }
 }

@@ -2,49 +2,32 @@
 
 namespace Kematjaya\UploadBundle\Uploader;
 
-use Kematjaya\UploadBundle\Event\PostUploadFileEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\File\File;
 use Kematjaya\Upload\Uploader\FileUploader as Uploader;
+use Kematjaya\UploadBundle\Event\PostUploadFileEvent;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
 class FileUploader extends Uploader implements UploaderInterface
 {
-    /**
-     *
-     * @var ContainerInterface
-     */
-    private $container;
+    private string $targetDir;
 
-    /**
-     *
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     *
-     * @var string
-     */
-    private $targetDir;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, ContainerInterface $container, SluggerInterface $slugger)
-    {
-        $this->container = $container;
-        $this->eventDispatcher = $eventDispatcher;
-
-        $configs = $container->getParameter('upload');
-        $this->targetDir = $configs['uploads_dir'];
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+        ParameterBagInterface $parameterBag,
+        SluggerInterface $slugger,
+    ) {
+        $this->targetDir = $parameterBag->get('upload')['uploads_dir'];
 
         parent::__construct($this->targetDir, $slugger);
     }
 
-    public function setTargetDirectory(string $uploadDir):UploaderInterface
+    public function setTargetDirectory(string $uploadDir): UploaderInterface
     {
         $this->targetDir = $uploadDir;
 
@@ -56,12 +39,11 @@ class FileUploader extends Uploader implements UploaderInterface
         return $this->targetDir;
     }
 
-    public function upload(UploadedFile $file, string $directory = null, bool $compress = true): ?File
+    public function upload(UploadedFile $file, ?string $directory = null, bool $compress = true): ?File
     {
         $uploadedFile = parent::upload($file, $directory);
         if (null === $uploadedFile) {
-
-            return $uploadedFile;
+            return null;
         }
 
         $event = $this->eventDispatcher->dispatch(

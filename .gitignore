@@ -52,3 +52,6 @@
 /.web-server-pid
 nbproject
 tests/uploads
+/composer.lock
+/.phpunit.result.cache
+/.idea

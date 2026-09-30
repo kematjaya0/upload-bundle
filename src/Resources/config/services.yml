@@ -4,35 +4,28 @@ services:
         autoconfigure: true
         public: false
 
-    Kematjaya\Upload\Uploader\UploaderInterface:
-        class: Kematjaya\UploadBundle\Uploader\FileUploader
-        public: true
-        
     Kematjaya\UploadBundle\Uploader\UploaderInterface:
         class: Kematjaya\UploadBundle\Uploader\FileUploader
-            
+
+    Kematjaya\Upload\Uploader\UploaderInterface:
+        alias: Kematjaya\UploadBundle\Uploader\UploaderInterface
+        public: true
+
     Kematjaya\UploadBundle\Manager\DocumentManagerInterface:
         class: Kematjaya\UploadBundle\Manager\DocumentManager
 
-    Kematjaya\UploadBundle\Extension\DocumentExtension:
-        class: Kematjaya\UploadBundle\Extension\DocumentExtension
-        
-    Kematjaya\UploadBundle\Controller\DownloadController:
-        class: Kematjaya\UploadBundle\Controller\DownloadController
-        
+    Kematjaya\UploadBundle\Extension\DocumentExtension: ~
+
+    Kematjaya\UploadBundle\Controller\DownloadController: ~
+
     Kematjaya\UploadBundle\Type\KmjFileType: ~
+
     Kematjaya\UploadBundle\Repository\DocumentRepositoryInterface:
         class: Kematjaya\UploadBundle\Repository\DocumentRepository
-        tags: 
+        tags:
             - doctrine.repository_service
-        
-    Kematjaya\UploadBundle\Twig\DownloadExtension:
-        class: Kematjaya\UploadBundle\Twig\DownloadExtension
-        tags: ['twig.extension']
-        
-    Kematjaya\UploadBundle\Twig\ImageExtension:
-        class: Kematjaya\UploadBundle\Twig\ImageExtension
-        tags: ['twig.extension']
-        
+
+    Kematjaya\UploadBundle\Twig\DownloadExtension: ~
+    Kematjaya\UploadBundle\Twig\ImageExtension: ~
+
     Kematjaya\UploadBundle\EventSubscriber\ImageOptimationSubscriber: ~
-       

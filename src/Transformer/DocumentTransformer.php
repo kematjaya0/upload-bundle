@@ -2,10 +2,10 @@
 
 namespace Kematjaya\UploadBundle\Transformer;
 
-use Symfony\Component\HttpFoundation\File\File;
 use Kematjaya\UploadBundle\File\KmjUploadedFile;
 use Kematjaya\UploadBundle\Manager\DocumentManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
@@ -13,75 +13,45 @@ use Symfony\Component\Form\DataTransformerInterface;
 class DocumentTransformer implements DataTransformerInterface
 {
     /**
-     *
-     * @var DocumentManagerInterface
+     * id dokumen yang sedang tersimpan, dipakai lagi bila form dikirim tanpa file baru.
      */
-    private $manager;
+    private ?string $id = null;
 
-    /**
-     *
-     * @var string
-     */
-    private $className;
-
-    /**
-     *
-     * @var string
-     */
-    private $additionalPath;
-
-    /**
-     *
-     * @var string
-     */
-    private $id;
-
-    private bool $compress;
-
-    public function __construct(DocumentManagerInterface $manager, string $className = null,  string $additionalPath = null, bool $compress = true)
-    {
-        $this->manager = $manager;
-        $this->compress = $compress;
-        $this->className = $className;
-        $this->additionalPath = $additionalPath;
+    public function __construct(
+        private readonly DocumentManagerInterface $manager,
+        private readonly ?string $className = null,
+        private readonly ?string $additionalPath = null,
+        private readonly bool $compress = true,
+    ) {
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform(mixed $value): mixed
     {
-        if (null === $value and null === $this->id) {
-
-            return null;
+        if ($value instanceof KmjUploadedFile) {
+            return $value->getId() ?? $this->id;
         }
 
+        if (!$value instanceof UploadedFile) {
+            return $this->id ?? $value;
+        }
 
-
-        if (!$value instanceof File) {
-            if (null !== $this->id) {
-
-                return $this->id;
-            }
-
+        if (UPLOAD_ERR_OK !== $value->getError()) {
             return $value;
         }
 
-        if ($value->getError()) {
+        $document = $this->manager->upload(
+            $value,
+            $this->className ?: $value::class,
+            $this->additionalPath,
+            $this->compress
+        );
 
-            return $value;
-        }
-
-        if (!$value instanceof KmjUploadedFile) {
-            $document = $this->manager->upload($value, $this->className ? $this->className : get_class($value), $this->additionalPath, $this->compress);
-
-            return $document ? $document->getId() : null;
-        }
-
-        return null;
+        return $document->getId();
     }
 
-    public function transform($value)
+    public function transform(mixed $value): mixed
     {
         if (null === $value) {
-
             return null;
         }
 
@@ -89,5 +59,4 @@ class DocumentTransformer implements DataTransformerInterface
 
         return $this->manager->findById($value);
     }
-
 }
