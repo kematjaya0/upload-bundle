@@ -12,9 +12,7 @@ class PostUploadFileEvent extends Event
 {
     public const EVENT_NAME = 'kematjaya.post_upload_file';
 
-    public function __construct(private File $file, private readonly bool $compress = true)
-    {
-    }
+    public function __construct(private File $file, private readonly bool $compress = true) {}
 
     public function getFile(): File
     {

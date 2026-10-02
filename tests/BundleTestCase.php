@@ -20,7 +20,7 @@ abstract class BundleTestCase extends WebTestCase
 
     protected function setUp(): void
     {
-        (new Filesystem())->remove([AppKernel::workDir().'/uploads', AppKernel::workDir().'/test.sqlite']);
+        (new Filesystem())->remove([AppKernel::workDir() . '/uploads', AppKernel::workDir() . '/test.sqlite']);
 
         $this->client = static::createClient();
 
@@ -56,7 +56,7 @@ abstract class BundleTestCase extends WebTestCase
 
     protected function pdfFile(string $name = 'Surat Jalan.pdf'): UploadedFile
     {
-        return $this->uploadedFile($name, file_get_contents(__DIR__.'/file/test.pdf'));
+        return $this->uploadedFile($name, file_get_contents(__DIR__ . '/file/test.pdf'));
     }
 
     protected function pngFile(string $name = 'logo.png'): UploadedFile

@@ -20,13 +20,12 @@ class DownloadExtension extends AbstractExtension
         private readonly Environment $twig,
         private readonly DocumentRepositoryInterface $repository,
         private readonly TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('download_link', [$this, 'downloadLink'], ['is_safe' => ['html']]),
+            new TwigFunction('download_link', $this->downloadLink(...), ['is_safe' => ['html']]),
         ];
     }
 

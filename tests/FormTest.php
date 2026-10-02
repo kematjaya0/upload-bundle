@@ -47,7 +47,7 @@ class FormTest extends BundleTestCase
     public function testCurrentDocumentWithMissingFile(): void
     {
         $document = $this->upload($this->pdfFile());
-        unlink($document->getPath().'/'.$document->getFileName());
+        unlink($document->getPath() . '/' . $document->getFileName());
 
         $form = $this->form($document->getId());
         $form->submit(null);
@@ -62,7 +62,7 @@ class FormTest extends BundleTestCase
 
         $this->assertFalse($form->isValid());
         $this->assertStringContainsString('allowed extension: PNG, jpg', (string) $form->getErrors());
-        $this->assertSame([], glob($this->uploadsDir().'/*.pdf'), 'file yang ditolak dihapus');
+        $this->assertSame([], glob($this->uploadsDir() . '/*.pdf'), 'file yang ditolak dihapus');
     }
 
     public function testExtensionAllowedIgnoresCase(): void
@@ -78,7 +78,7 @@ class FormTest extends BundleTestCase
         $document = $this->upload($this->pdfFile());
 
         $view = $this->form($document->getId())->createView();
-        $this->assertSame('/kmj/'.$document->getId().'/download', $view->vars['download_url']);
+        $this->assertSame('/kmj/' . $document->getId() . '/download', $view->vars['download_url']);
         $this->assertSame($document->getFileName(), $view->vars['html_label']);
 
         $view = $this->form($document->getId(), ['html_label' => 'Unduh'])->createView();

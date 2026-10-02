@@ -15,7 +15,7 @@ class ImageOptimationSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dir = sys_get_temp_dir().'/kmj-optimizer-'.uniqid();
+        $this->dir = sys_get_temp_dir() . '/kmj-optimizer-' . uniqid();
         mkdir($this->dir);
     }
 
@@ -33,9 +33,9 @@ class ImageOptimationSubscriberTest extends TestCase
         $this->subscriber()->optimation($event);
 
         $optimized = $event->getFile();
-        $this->assertSame(pathinfo($name, PATHINFO_FILENAME).'-optimized.'.pathinfo($name, PATHINFO_EXTENSION), $optimized->getFilename());
+        $this->assertSame(pathinfo($name, PATHINFO_FILENAME) . '-optimized.' . pathinfo($name, PATHINFO_EXTENSION), $optimized->getFilename());
         $this->assertSame($mime, getimagesize($optimized->getPathname())['mime']);
-        $this->assertFileDoesNotExist($this->dir.'/'.$name);
+        $this->assertFileDoesNotExist($this->dir . '/' . $name);
     }
 
     public static function images(): array
@@ -55,9 +55,9 @@ class ImageOptimationSubscriberTest extends TestCase
         imagealphablending($image, false);
         imagesavealpha($image, true);
         imagefill($image, 0, 0, imagecolorallocatealpha($image, 0, 0, 0, 127));
-        imagepng($image, $this->dir.'/transparan.png');
+        imagepng($image, $this->dir . '/transparan.png');
 
-        $event = new PostUploadFileEvent(new File($this->dir.'/transparan.png'));
+        $event = new PostUploadFileEvent(new File($this->dir . '/transparan.png'));
         $this->subscriber()->optimation($event);
 
         $optimized = imagecreatefrompng($event->getFile()->getPathname());
@@ -69,8 +69,8 @@ class ImageOptimationSubscriberTest extends TestCase
         $event = new PostUploadFileEvent($this->image('foto.jpg', 'jpeg'));
         $this->subscriber(false)->optimation($event);
 
-        $this->assertFileExists($this->dir.'/foto.jpg');
-        $this->assertFileExists($this->dir.'/foto-optimized.jpg');
+        $this->assertFileExists($this->dir . '/foto.jpg');
+        $this->assertFileExists($this->dir . '/foto-optimized.jpg');
     }
 
     public function testSkippedWhenCompressDisabled(): void
@@ -84,16 +84,16 @@ class ImageOptimationSubscriberTest extends TestCase
 
     public function testNonImageIsLeftAlone(): void
     {
-        file_put_contents($this->dir.'/catatan.txt', 'teks');
-        file_put_contents($this->dir.'/palsu.jpg', 'bukan gambar');
+        file_put_contents($this->dir . '/catatan.txt', 'teks');
+        file_put_contents($this->dir . '/palsu.jpg', 'bukan gambar');
 
         foreach (['catatan.txt', 'palsu.jpg'] as $name) {
-            $file = new File($this->dir.'/'.$name);
+            $file = new File($this->dir . '/' . $name);
             $event = new PostUploadFileEvent($file);
             $this->subscriber()->optimation($event);
 
             $this->assertSame($file, $event->getFile());
-            $this->assertFileExists($this->dir.'/'.$name);
+            $this->assertFileExists($this->dir . '/' . $name);
         }
     }
 
@@ -108,8 +108,8 @@ class ImageOptimationSubscriberTest extends TestCase
     {
         $image = imagecreatetruecolor(20, 20);
         imagefill($image, 0, 0, imagecolorallocate($image, 10, 120, 200));
-        ('image'.$format)($image, $this->dir.'/'.$name);
+        ('image' . $format)($image, $this->dir . '/' . $name);
 
-        return new File($this->dir.'/'.$name);
+        return new File($this->dir . '/' . $name);
     }
 }

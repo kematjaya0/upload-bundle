@@ -19,7 +19,7 @@ class DownloadController extends AbstractController
             return new Response(sprintf('unable to load document with id: %s', $id), Response::HTTP_NOT_FOUND);
         }
 
-        $path = $document->getPath().DIRECTORY_SEPARATOR.$document->getFileName();
+        $path = $document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName();
         if (!is_file($path)) {
             return new Response('File not found !!', Response::HTTP_NOT_FOUND);
         }

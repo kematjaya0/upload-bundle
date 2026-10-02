@@ -12,12 +12,12 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class ImageOptimationSubscriber implements EventSubscriberInterface
 {
-    private const ALLOWED_EXTENSIONS = ['jpeg', 'gif', 'jpg', 'png'];
+    private const array ALLOWED_EXTENSIONS = ['jpeg', 'gif', 'jpg', 'png'];
 
     /**
      * @var array{remove_origin: bool, quality: int|string}
      */
-    private array $optimizer;
+    private readonly array $optimizer;
 
     public function __construct(ParameterBagInterface $parameterBag)
     {
@@ -72,7 +72,7 @@ class ImageOptimationSubscriber implements EventSubscriberInterface
         $newImagePath = sprintf(
             '%s/%s-optimized.%s',
             $originalFile->getPath(),
-            $originalFile->getBasename('.'.$originalFile->getExtension()),
+            $originalFile->getBasename('.' . $originalFile->getExtension()),
             $originalFile->getExtension()
         );
 

@@ -23,8 +23,7 @@ class DocumentTransformer implements DataTransformerInterface
         private readonly ?string $className = null,
         private readonly ?string $additionalPath = null,
         private readonly bool $compress = true,
-    ) {
-    }
+    ) {}
 
     public function reverseTransform(mixed $value): mixed
     {

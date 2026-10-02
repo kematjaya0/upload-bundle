@@ -9,7 +9,7 @@ class TwigTest extends BundleTestCase
     public function testDownloadLink(): void
     {
         $document = $this->upload($this->pdfFile());
-        $url = '/kmj/'.$document->getId().'/download';
+        $url = '/kmj/' . $document->getId() . '/download';
 
         $html = $this->render('{{ download_link(id) }}', ['id' => $document->getId()]);
         $this->assertStringContainsString($url, $html);
@@ -32,7 +32,7 @@ class TwigTest extends BundleTestCase
         $pdf = $this->upload($this->pdfFile());
 
         $html = $this->render("{{ image_view(id, {width: '50'}) }}", ['id' => $image->getId()]);
-        $this->assertStringContainsString('src="/kmj/'.$image->getId().'/download" width="50"', $html);
+        $this->assertStringContainsString('src="/kmj/' . $image->getId() . '/download" width="50"', $html);
 
         $this->assertStringContainsString('no-image.png', $this->render('{{ image_view(id) }}', ['id' => $pdf->getId()]));
         $this->assertStringContainsString('no-image.png', $this->render('{{ image_view(null) }}'));
@@ -45,7 +45,7 @@ class TwigTest extends BundleTestCase
         $pdf = $this->upload($this->pdfFile());
 
         $html = $this->render('{{ image_link(id) }}', ['id' => $image->getId()]);
-        $this->assertStringContainsString('<img src="/kmj/'.$image->getId().'/download"', $html);
+        $this->assertStringContainsString('<img src="/kmj/' . $image->getId() . '/download"', $html);
 
         // bukan gambar: jatuh ke link download berlabel nama file
         $html = $this->render('{{ image_link(id) }}', ['id' => $pdf->getId()]);
@@ -56,7 +56,7 @@ class TwigTest extends BundleTestCase
     public function testImageWithMissingFile(): void
     {
         $image = $this->upload($this->pngFile());
-        unlink($image->getPath().'/'.$image->getFileName());
+        unlink($image->getPath() . '/' . $image->getFileName());
 
         $this->assertStringContainsString('no-image.png', $this->render('{{ image_view(id) }}', ['id' => $image->getId()]));
     }

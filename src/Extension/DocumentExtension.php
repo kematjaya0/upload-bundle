@@ -18,8 +18,7 @@ class DocumentExtension extends AbstractTypeExtension
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly DocumentRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     public static function getExtendedTypes(): iterable
     {

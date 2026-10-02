@@ -17,8 +17,7 @@ class DocumentManager implements DocumentManagerInterface
     public function __construct(
         private readonly UploaderInterface $uploader,
         private readonly DocumentRepositoryInterface $documentRepo,
-    ) {
-    }
+    ) {}
 
     public function getUploader(): UploaderInterface
     {
@@ -58,7 +57,7 @@ class DocumentManager implements DocumentManagerInterface
         }
 
         // dokumen masih tercatat tetapi file-nya sudah tidak ada di disk
-        $path = $document->getPath().DIRECTORY_SEPARATOR.$document->getFileName();
+        $path = $document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName();
         if (!is_file($path)) {
             return null;
         }

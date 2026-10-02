@@ -16,21 +16,20 @@ class ImageExtension extends AbstractExtension
     public function __construct(
         private readonly DocumentRepositoryInterface $repository,
         private readonly Environment $twig,
-    ) {
-    }
+    ) {}
 
     public function getTests(): array
     {
         return [
-            new TwigTest('is_image', [$this, 'isImage']),
+            new TwigTest('is_image', $this->isImage(...)),
         ];
     }
 
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('image_view', [$this, 'imageView'], ['is_safe' => ['html']]),
-            new TwigFunction('image_link', [$this, 'imageLink'], ['is_safe' => ['html']]),
+            new TwigFunction('image_view', $this->imageView(...), ['is_safe' => ['html']]),
+            new TwigFunction('image_link', $this->imageLink(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -41,7 +40,7 @@ class ImageExtension extends AbstractExtension
             return false;
         }
 
-        $path = $document->getPath().DIRECTORY_SEPARATOR.$document->getFileName();
+        $path = $document->getPath() . DIRECTORY_SEPARATOR . $document->getFileName();
 
         return is_file($path) && false !== @getimagesize($path);
     }

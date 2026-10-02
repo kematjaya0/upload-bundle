@@ -10,7 +10,7 @@ class DownloadTest extends BundleTestCase
     {
         $document = $this->upload($this->pdfFile());
 
-        $this->client->request('GET', '/kmj/'.$document->getId().'/download');
+        $this->client->request('GET', '/kmj/' . $document->getId() . '/download');
 
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
@@ -20,7 +20,7 @@ class DownloadTest extends BundleTestCase
 
     public function testUnknownDocument(): void
     {
-        $this->client->request('GET', '/kmj/'.Uuid::v4().'/download');
+        $this->client->request('GET', '/kmj/' . Uuid::v4() . '/download');
 
         $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
@@ -28,9 +28,9 @@ class DownloadTest extends BundleTestCase
     public function testDocumentWithoutFile(): void
     {
         $document = $this->upload($this->pdfFile());
-        unlink($document->getPath().'/'.$document->getFileName());
+        unlink($document->getPath() . '/' . $document->getFileName());
 
-        $this->client->request('GET', '/kmj/'.$document->getId().'/download');
+        $this->client->request('GET', '/kmj/' . $document->getId() . '/download');
 
         $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }

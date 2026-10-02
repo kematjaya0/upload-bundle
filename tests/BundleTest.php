@@ -34,7 +34,7 @@ class BundleTest extends BundleTestCase
         $this->assertSame('pdf', $document->getExtension());
         $this->assertMatchesRegularExpression('/^surat-jalan-[0-9a-f]+\.pdf$/', $document->getFileName());
         $this->assertSame(realpath($this->uploadsDir()), realpath($document->getPath()));
-        $this->assertFileExists($document->getPath().'/'.$document->getFileName());
+        $this->assertFileExists($document->getPath() . '/' . $document->getFileName());
 
         $this->entityManager()->clear();
         $found = static::getContainer()->get('test.document_repository')->findOneById($document->getId());
@@ -45,12 +45,12 @@ class BundleTest extends BundleTestCase
     {
         $document = $this->manager()->upload($this->pdfFile(), 'Foo', 'surat/2026');
 
-        $this->assertSame(realpath($this->uploadsDir().'/surat/2026'), realpath($document->getPath()));
+        $this->assertSame(realpath($this->uploadsDir() . '/surat/2026'), realpath($document->getPath()));
     }
 
     public function testSetTargetDirectoryIsUsedForUpload(): void
     {
-        $target = AppKernel::workDir().'/uploads/lain';
+        $target = AppKernel::workDir() . '/uploads/lain';
         static::getContainer()->get('test.uploader')->setTargetDirectory($target);
 
         $document = $this->manager()->upload($this->pdfFile(), 'Foo');
@@ -73,7 +73,7 @@ class BundleTest extends BundleTestCase
     public function testFindByIdWhenFileIsMissingOnDisk(): void
     {
         $document = $this->upload($this->pdfFile());
-        unlink($document->getPath().'/'.$document->getFileName());
+        unlink($document->getPath() . '/' . $document->getFileName());
 
         $this->assertNull($this->manager()->findById($document->getId()));
     }
@@ -95,9 +95,9 @@ class BundleTest extends BundleTestCase
         $document = $this->upload($this->pngFile());
 
         $this->assertStringEndsWith('-optimized.png', $document->getFileName());
-        $path = $document->getPath().'/'.$document->getFileName();
+        $path = $document->getPath() . '/' . $document->getFileName();
         $this->assertSame('image/png', getimagesize($path)['mime']);
-        $this->assertCount(1, glob($document->getPath().'/*.png'), 'file asli dihapus setelah kompresi');
+        $this->assertCount(1, glob($document->getPath() . '/*.png'), 'file asli dihapus setelah kompresi');
     }
 
     public function testImageIsNotCompressedWhenDisabled(): void
@@ -109,11 +109,11 @@ class BundleTest extends BundleTestCase
 
     public function testDocumentFromFile(): void
     {
-        $document = Document::fromFile(new File(__DIR__.'/file/test.pdf'));
+        $document = Document::fromFile(new File(__DIR__ . '/file/test.pdf'));
 
         $this->assertSame('test.pdf', $document->getFileName());
         $this->assertSame('pdf', $document->getExtension());
-        $this->assertSame(__DIR__.'/file', $document->getPath());
+        $this->assertSame(__DIR__ . '/file', $document->getPath());
         $this->assertNull($document->getId());
     }
 }
